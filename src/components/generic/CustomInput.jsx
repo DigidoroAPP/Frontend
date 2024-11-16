@@ -1,6 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { TextField, InputAdornment } from "@mui/material";
+import {
+  TextField,
+  InputAdornment,
+  FormControl,
+  FormLabel,
+} from "@mui/material";
 import { AnimatePresence } from "framer-motion";
 import { PresenceAnimation } from "./FadeIn";
 
@@ -17,14 +22,32 @@ const CustomInput = ({
   type = "text",
   placeholder,
   ariaLabel,
+  labelText,
   errors,
   icon,
+  iconPosition = "left",
   ...props
 }) => {
   const hasError = !!errors?.message;
 
   return (
-    <div>
+    <FormControl fullWidth>
+      {/* Label */}
+      {labelText && (
+        <FormLabel
+          htmlFor={name}
+          sx={{
+            color: "#202124",
+            fontSize: "1.5rem",
+            fontWeight: "800",
+            lineHeight: "45px",
+          }}
+        >
+          {labelText}
+        </FormLabel>
+      )}
+
+      {/* Input */}
       <TextField
         fullWidth
         {...innerRef}
@@ -35,33 +58,48 @@ const CustomInput = ({
         variant="outlined"
         slotProps={{
           input: {
-            startAdornment: icon && (
-              <InputAdornment
-                position="start"
-                color={hasError ? "error" : "primary"}
-              >
-                {React.cloneElement(icon, {
-                  style: {
-                    color: hasError ? "#FF6B6B" : "#202124",
-                  },
-                })}
-              </InputAdornment>
-            ),
+            startAdornment:
+              icon && iconPosition === "left" ? (
+                <InputAdornment
+                  position="start"
+                  color={hasError ? "error" : "primary"}
+                >
+                  {React.cloneElement(icon, {
+                    style: {
+                      color: hasError ? "#FF6B6B" : "#202124",
+                    },
+                  })}
+                </InputAdornment>
+              ) : null,
+            endAdornment:
+              icon && iconPosition === "right" ? (
+                <InputAdornment
+                  position="end"
+                  color={hasError ? "error" : "primary"}
+                >
+                  {React.cloneElement(icon, {
+                    style: {
+                      color: hasError ? "#FF6B6B" : "#202124",
+                      cursor: "pointer",
+                    },
+                  })}
+                </InputAdornment>
+              ) : null,
           },
         }}
         sx={{
           "& .MuiOutlinedInput-root": {
-            borderRadius: "0.5rem",
+            borderRadius: "0.3rem",
             borderColor: hasError ? "#FF6B6B" : "#202124",
             boxShadow: hasError
-              ? "4px 4px 0px 0px #FF6B6B"
-              : "4px 4px 0px 0px #000",
+              ? "5px 5px 0px 0px #FF6B6B"
+              : "5px 5px 0px 0px #000",
             "&:hover": {
               borderColor: hasError ? "#FF6B6B" : "#000",
             },
           },
           "& .MuiOutlinedInput-notchedOutline": {
-            borderRadius: "0.5rem",
+            borderRadius: "0.3rem",
             borderWidth: "2px",
             borderColor: hasError ? "#FF6B6B !important" : "#202124 !important",
           },
@@ -69,6 +107,7 @@ const CustomInput = ({
         {...props}
       />
 
+      {/* Errores */}
       <div aria-live="polite" aria-atomic="true">
         <AnimatePresence>
           {errors && errors.message && (
@@ -83,7 +122,7 @@ const CustomInput = ({
           )}
         </AnimatePresence>
       </div>
-    </div>
+    </FormControl>
   );
 };
 
@@ -100,7 +139,9 @@ CustomInput.propTypes = {
   errors: PropTypes.shape({
     message: PropTypes.string,
   }),
-  icon: PropTypes.element, // Para íconos personalizados
+  icon: PropTypes.element,
+  iconPosition: PropTypes.oneOf(["left", "right"]),
+  labelText: PropTypes.string,
 };
 
 export default CustomInput;
