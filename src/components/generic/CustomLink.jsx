@@ -9,7 +9,7 @@ const CustomLink = ({ href, title }) => {
       sx={{
         color: "#202124",
         fontFamily: "'Inter', sans-serif",
-        fontSize: "1.2rem",
+        fontSize: "1.1rem",
         lineHeight: "65.354px",
         textDecoration: "underline",
         "&:hover": {
