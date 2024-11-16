@@ -38,10 +38,10 @@ const CustomInput = ({
           htmlFor={name}
           sx={{
             color: "#202124",
-            fontSize: "1.5rem",
             fontWeight: "800",
             lineHeight: "45px",
           }}
+          className="!text-xl"
         >
           {labelText}
         </FormLabel>

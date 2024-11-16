@@ -8,14 +8,12 @@ const CustomLink = ({ href, title }) => {
       href={href}
       sx={{
         color: "#202124",
-        fontFamily: "'Inter', sans-serif",
-        fontSize: "1.1rem",
-        lineHeight: "65.354px",
         textDecoration: "underline",
         "&:hover": {
           textDecoration: "none",
         },
       }}
+      className="!text-lg"
     >
       {title}
     </Link>
