@@ -11,6 +11,7 @@ import { EmailIcon } from "../../components/generic/Icons";
 import PageContainer from "../../containers/login/PageContainer";
 import CustomButton from "../../components/generic/CustomButton";
 import CustomLink from "../../components/generic/CustomLink";
+import PasswordToggleIcon from "../../components/login/PasswordToggleIcon";
 
 const Register = () => {
   const [loading, setLoading] = useState(false);
@@ -88,21 +89,10 @@ const Register = () => {
                 errors={errors.password}
                 type={showPassword ? "text" : "password"}
                 icon={
-                  showPassword ? (
-                    <VisibilityOff
-                      onClick={togglePasswordVisibility}
-                      style={{ cursor: "pointer" }}
-                      width={30}
-                      height={30}
-                    />
-                  ) : (
-                    <Visibility
-                      onClick={togglePasswordVisibility}
-                      style={{ cursor: "pointer" }}
-                      width={30}
-                      height={30}
-                    />
-                  )
+                  <PasswordToggleIcon
+                    showPassword={showPassword}
+                    onToggle={togglePasswordVisibility}
+                  />
                 }
                 iconPosition="right"
               />
