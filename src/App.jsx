@@ -3,6 +3,7 @@ import Home from "./pages/Home";
 import theme from "./theme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import Login from "./pages/login/Login";
+import Register from "./pages/register/Register";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
           </Routes>
 
           <CssBaseline />

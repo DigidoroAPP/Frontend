@@ -5,15 +5,14 @@ import { useForm } from "react-hook-form";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import CustomInput from "../../components/generic/CustomInput";
 import SectionIntro from "../../components/generic/SectionIntro";
-import { loginSchema } from "../../validations/LoginSchema";
+import { registerSchema } from "../../validations/RegisterSchema";
 import DigiLogo from "../../components/generic/DigiLogo";
 import { EmailIcon } from "../../components/generic/Icons";
 import PageContainer from "../../containers/login/PageContainer";
 import CustomButton from "../../components/generic/CustomButton";
 import CustomLink from "../../components/generic/CustomLink";
-import PasswordToggleIcon from "../../components/login/PasswordToggleIcon";
 
-const Login = () => {
+const Register = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const togglePasswordVisibility = () => {
@@ -25,7 +24,7 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(registerSchema),
   });
 
   const onSubmit = (data) => {
@@ -48,12 +47,24 @@ const Login = () => {
       >
         <DigiLogo className="justify-center" />
         <SectionIntro
-          title="Iniciar sesión"
-          description="Inicia sesión para continuar"
+          title="Regístrate"
+          description="Crea una cuenta para continuar"
         />
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <Grid2 container spacing={4}>
+            {/* nombre */}
+
+            <Grid2 item size={12}>
+              <CustomInput
+                innerRef={register("name")}
+                labelText="Tu nombre"
+                name="name"
+                placeholder="Nombre"
+                errors={errors.name}
+              />
+            </Grid2>
+
             {/* correo */}
             <Grid2 item size={12}>
               <CustomInput
@@ -77,10 +88,21 @@ const Login = () => {
                 errors={errors.password}
                 type={showPassword ? "text" : "password"}
                 icon={
-                  <PasswordToggleIcon
-                    showPassword={showPassword}
-                    onToggle={togglePasswordVisibility}
-                  />
+                  showPassword ? (
+                    <VisibilityOff
+                      onClick={togglePasswordVisibility}
+                      style={{ cursor: "pointer" }}
+                      width={30}
+                      height={30}
+                    />
+                  ) : (
+                    <Visibility
+                      onClick={togglePasswordVisibility}
+                      style={{ cursor: "pointer" }}
+                      width={30}
+                      height={30}
+                    />
+                  )
                 }
                 iconPosition="right"
               />
@@ -88,14 +110,14 @@ const Login = () => {
 
             <Grid2 item size={12}>
               <CustomButton type="submit" className="mt-4">
-                Iniciar sesión
+                Regístrate
               </CustomButton>
             </Grid2>
 
             <Grid2 item size={12} className="text-center">
               <CustomLink
-                href="/register"
-                title="¿No tienes cuenta? Regístrate"
+                href="/login"
+                title="¿Ya tienes cuenta? Inicia sesión"
               />
             </Grid2>
           </Grid2>
@@ -105,4 +127,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;

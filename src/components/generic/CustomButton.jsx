@@ -10,11 +10,8 @@ const CustomButton = ({
   children,
   props,
 }) => {
-  console.log("CustomButton -> Component");
   const CustomButtonProps =
-    Component === "button"
-      ? {onClick: action }
-      : { to };
+    Component === "button" ? { onClick: action } : { to };
 
   return (
     <Component

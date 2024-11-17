@@ -109,7 +109,7 @@ const CustomInput = ({
               : isFocused
               ? "6px 6px 0px 0px #284485"
               : "5px 5px 0px 0px #000",
-            transition: "box-shadow 0.3s ease, border-color 0.3s ease", 
+            transition: "box-shadow 0.3s ease, border-color 0.3s ease",
             "&:hover": {
               borderColor: hasError ? "#FF6B6B" : "#000",
             },
@@ -124,8 +124,8 @@ const CustomInput = ({
               : "#202124 !important",
           },
         }}
-        onFocus={() => setIsFocused(true)} 
-        onBlur={() => setIsFocused(false)} 
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
         {...props}
       />
 
