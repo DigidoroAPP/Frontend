@@ -47,6 +47,7 @@ const Login = () => {
           p: { xs: 3, sm: 6 },
           mx: "auto",
           maxWidth: "450px",
+          backgroundColor: "white",
           boxShadow:
             "hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px",
         }}
@@ -101,13 +102,7 @@ const Login = () => {
             </Grid2>
 
             <Grid2 item size={12}>
-              <CustomButton
-                action={() => {
-                  console.log("Iniciar sesión");
-                }}
-                type="submit"
-                className="mt-4"
-              >
+              <CustomButton type="submit" className="mt-4">
                 Iniciar sesión
               </CustomButton>
             </Grid2>

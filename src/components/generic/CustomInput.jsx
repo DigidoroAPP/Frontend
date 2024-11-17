@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import {
   TextField,
@@ -28,6 +28,7 @@ const CustomInput = ({
   iconPosition = "left",
   ...props
 }) => {
+  const [isFocused, setIsFocused] = useState(false);
   const hasError = !!errors?.message;
 
   return (
@@ -66,7 +67,11 @@ const CustomInput = ({
                 >
                   {React.cloneElement(icon, {
                     style: {
-                      color: hasError ? "#FF6B6B" : "#202124",
+                      color: hasError
+                        ? "#FF6B6B"
+                        : isFocused
+                        ? "#284485"
+                        : "#202124",
                     },
                   })}
                 </InputAdornment>
@@ -79,7 +84,11 @@ const CustomInput = ({
                 >
                   {React.cloneElement(icon, {
                     style: {
-                      color: hasError ? "#FF6B6B" : "#202124",
+                      color: hasError
+                        ? "#FF6B6B"
+                        : isFocused
+                        ? "#284485"
+                        : "#202124",
                       cursor: "pointer",
                     },
                   })}
@@ -90,10 +99,17 @@ const CustomInput = ({
         sx={{
           "& .MuiOutlinedInput-root": {
             borderRadius: "0.3rem",
-            borderColor: hasError ? "#FF6B6B" : "#202124",
+            borderColor: hasError
+              ? "#FF6B6B"
+              : isFocused
+              ? "#284485"
+              : "#202124",
             boxShadow: hasError
               ? "5px 5px 0px 0px #FF6B6B"
+              : isFocused
+              ? "6px 6px 0px 0px #284485"
               : "5px 5px 0px 0px #000",
+            transition: "box-shadow 0.3s ease, border-color 0.3s ease", 
             "&:hover": {
               borderColor: hasError ? "#FF6B6B" : "#000",
             },
@@ -101,9 +117,15 @@ const CustomInput = ({
           "& .MuiOutlinedInput-notchedOutline": {
             borderRadius: "0.3rem",
             borderWidth: "2px",
-            borderColor: hasError ? "#FF6B6B !important" : "#202124 !important",
+            borderColor: hasError
+              ? "#FF6B6B !important"
+              : isFocused
+              ? "#284485 !important"
+              : "#202124 !important",
           },
         }}
+        onFocus={() => setIsFocused(true)} 
+        onBlur={() => setIsFocused(false)} 
         {...props}
       />
 
