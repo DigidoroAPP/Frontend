@@ -1,14 +1,15 @@
 import clsx from "clsx";
+import PropTypes from "prop-types";
 
 export function SectionIntro({
   title,
   id,
   eyebrow,
-  description, // Añadido
+  description,
   children,
   smaller = false,
   vertical = false,
-  className = "py-6 md:py-8 my-4 md:my-6",
+  className = "py-4 md:py-6 my-3 md:my-5",
   ...props
 }) {
   return (
@@ -83,5 +84,16 @@ export function SectionIntro({
     </div>
   );
 }
+
+SectionIntro.propTypes = {
+  title: PropTypes.string.isRequired,
+  id: PropTypes.string,
+  eyebrow: PropTypes.string,
+  description: PropTypes.string,
+  children: PropTypes.node,
+  smaller: PropTypes.bool,
+  vertical: PropTypes.bool,
+  className: PropTypes.string,
+};
 
 export default SectionIntro;

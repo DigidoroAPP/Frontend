@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 @layer components {
+  html {
+    font-size: 1.1rem;
+  }
+
   .shadow-full::before {
     content: "";
     position: absolute;

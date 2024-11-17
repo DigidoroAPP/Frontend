@@ -1,21 +1,21 @@
 import { Link } from "@mui/material";
 import React from "react";
 import PropTypes from "prop-types";
+import { Link as ReactRouterLink } from "react-router-dom";
 
 const CustomLink = ({ href, title }) => {
   return (
     <Link
-      href={href}
+      to={href}
       sx={{
         color: "#202124",
-        fontFamily: "'Inter', sans-serif",
-        fontSize: "1.1rem",
-        lineHeight: "65.354px",
         textDecoration: "underline",
         "&:hover": {
           textDecoration: "none",
         },
       }}
+      className="!text-lg"
+      component={ReactRouterLink}
     >
       {title}
     </Link>
