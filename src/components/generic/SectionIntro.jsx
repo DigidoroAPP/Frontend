@@ -15,9 +15,7 @@ export function SectionIntro({
   return (
     <div {...props} className={className}>
       {eyebrow && (
-        <span
-          className={clsx("mb-3 block font-display text-lg font-semibold")}
-        >
+        <span className={clsx("mb-3 block font-display text-lg font-semibold")}>
           {eyebrow}
         </span>
       )}
@@ -29,13 +27,18 @@ export function SectionIntro({
             className={clsx(
               "scroll-top",
               "text-[#202124] font-extrabold",
-              smaller ? "text-2xl" : "text-5xl"
+              smaller ? "text-3xl" : "text-5xl"
             )}
           >
             {title}
           </h2>
           {description && (
-            <p className="text-[#202124] text-lg font-medium leading-9 mt-1">
+            <p
+              className={clsx(
+                "text-[#202124] font-medium leading-[normal]",
+                smaller ? "text-base" : "text-lg mt-1"
+              )}
+            >
               {description}
             </p>
           )}
@@ -50,13 +53,18 @@ export function SectionIntro({
             className={clsx(
               "scroll-top",
               "text-[#202124] font-extrabold",
-              smaller ? "text-2xl" : "text-5xl"
+              smaller ? "text-3xl" : "text-5xl"
             )}
           >
             {title}
           </h2>
           {description && (
-            <p className="text-[#202124] text-lg font-medium leading-9 mt-1">
+            <p
+              className={clsx(
+                "text-[#202124] font-medium leading-[normal]",
+                smaller ? "text-base" : "text-lg mt-1"
+              )}
+            >
               {description}
             </p>
           )}
@@ -69,13 +77,18 @@ export function SectionIntro({
             className={clsx(
               "scroll-top",
               "text-[#202124] font-extrabold ",
-              smaller ? "text-2xl" : "text-5xl"
+              smaller ? "text-3xl" : "text-5xl"
             )}
           >
             {title}
           </h2>
           {description && (
-            <p className="text-[#202124] text-lg font-medium leading-9 mt-1">
+            <p
+              className={clsx(
+                "text-[#202124] font-medium leading-[normal]",
+                smaller ? "text-base" : "text-lg mt-1"
+              )}
+            >
               {description}
             </p>
           )}
