@@ -65,7 +65,7 @@ export default {
         secondary_color: "#202124",
         accent_color: "#4880FF",
         secondary_color_variant: "#E8EAED",
-        tertiary_color: "#ededed",
+        tertiary_color: "#f4f4f4ec",
 
         // ACCENT COLOR PALETTE
         cherry_red_accent: "#E15A51",

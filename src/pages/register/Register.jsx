@@ -37,8 +37,8 @@ const Register = () => {
     <LoginPageContainer>
       <Box
         sx={{
-          p: { xs: 3, sm: 5 },
-          borderRadius: 1,
+          p: { xs: 3, sm: 4.5 },
+          borderRadius: 2,
           mx: "auto",
           maxWidth: "500px",
           backgroundColor: "white",
@@ -53,7 +53,7 @@ const Register = () => {
         />
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
-          <Grid2 container spacing={4}>
+          <Grid2 container spacing={3}>
             {/* nombre */}
             <Grid2 item size={12}>
               <CustomInput
