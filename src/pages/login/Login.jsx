@@ -2,7 +2,6 @@ import { Grid2, Box } from "@mui/material";
 import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
 import CustomInput from "../../components/generic/CustomInput";
 import SectionIntro from "../../components/generic/SectionIntro";
 import { loginSchema } from "../../validations/LoginSchema";
@@ -12,6 +11,7 @@ import PageContainer from "../../containers/login/PageContainer";
 import CustomButton from "../../components/generic/CustomButton";
 import CustomLink from "../../components/generic/CustomLink";
 import PasswordToggleIcon from "../../components/login/PasswordToggleIcon";
+import { VIEWS } from "../../lib/views";
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
@@ -76,13 +76,13 @@ const Login = () => {
                 placeholder="Contraseña"
                 errors={errors.password}
                 type={showPassword ? "text" : "password"}
+                iconPosition="right"
                 icon={
                   <PasswordToggleIcon
                     showPassword={showPassword}
                     onToggle={togglePasswordVisibility}
                   />
                 }
-                iconPosition="right"
               />
             </Grid2>
 
@@ -94,7 +94,7 @@ const Login = () => {
 
             <Grid2 item size={12} className="text-center">
               <CustomLink
-                href="/register"
+                href={VIEWS.register}
                 title="¿No tienes cuenta? Regístrate"
               />
             </Grid2>
