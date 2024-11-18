@@ -2,7 +2,6 @@ import { Grid2, Box } from "@mui/material";
 import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
 import CustomInput from "../../components/generic/CustomInput";
 import SectionIntro from "../../components/generic/SectionIntro";
 import { registerSchema } from "../../validations/RegisterSchema";
@@ -12,6 +11,7 @@ import PageContainer from "../../containers/login/PageContainer";
 import CustomButton from "../../components/generic/CustomButton";
 import CustomLink from "../../components/generic/CustomLink";
 import PasswordToggleIcon from "../../components/login/PasswordToggleIcon";
+import { VIEWS } from "../../lib/views";
 
 const Register = () => {
   const [loading, setLoading] = useState(false);
@@ -55,7 +55,6 @@ const Register = () => {
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <Grid2 container spacing={4}>
             {/* nombre */}
-
             <Grid2 item size={12}>
               <CustomInput
                 innerRef={register("name")}
@@ -88,13 +87,13 @@ const Register = () => {
                 placeholder="Contraseña"
                 errors={errors.password}
                 type={showPassword ? "text" : "password"}
+                iconPosition="right"
                 icon={
                   <PasswordToggleIcon
                     showPassword={showPassword}
                     onToggle={togglePasswordVisibility}
                   />
                 }
-                iconPosition="right"
               />
             </Grid2>
 
@@ -106,7 +105,7 @@ const Register = () => {
 
             <Grid2 item size={12} className="text-center">
               <CustomLink
-                href="/login"
+                href={VIEWS.login}
                 title="¿Ya tienes cuenta? Inicia sesión"
               />
             </Grid2>
