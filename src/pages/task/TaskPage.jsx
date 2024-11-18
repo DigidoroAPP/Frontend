@@ -1,9 +1,10 @@
 import React, { useState, useRef } from "react";
 import PageContainer from "../../containers/home/PageContainer";
 import SectionIntro from "../../components/generic/SectionIntro";
-import { Grid2, Toolbar } from "@mui/material";
+import { Grid2, Toolbar, Fab } from "@mui/material";
 import Title from "../../components/generic/Title";
 import Column from "../../containers/task/Column";
+import CreateNewTask from "../../containers/task/CreateNewTask";
 
 const TaskPage = () => {
   const [pendingTasks, setPendingTasks] = useState([
@@ -34,6 +35,8 @@ const TaskPage = () => {
   ]);
 
   const [predictedColumn, setPredictedColumn] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newTask, setNewTask] = useState({ title: "", color: "#000" });
 
   const pendingRef = useRef(null);
   const completedRef = useRef(null);
@@ -121,6 +124,22 @@ const TaskPage = () => {
     moveTask(task, fromPending);
   };
 
+  const handleOpenModal = () => setIsModalOpen(true);
+
+  const handleCloseModal = () => setIsModalOpen(false);
+
+  const handleSaveTask = () => {
+    const newTaskWithId = {
+      ...newTask,
+      id: Date.now(),
+      date: "Sin fecha",
+      isChecked: false,
+    };
+    setPendingTasks((prev) => [...prev, newTaskWithId]);
+    setNewTask({ title: "", color: "#000" });
+    handleCloseModal();
+  };
+
   return (
     <PageContainer>
       <Toolbar />
@@ -166,6 +185,28 @@ const TaskPage = () => {
           />
         </Grid2>
       </Grid2>
+
+      <Fab
+        color="primary"
+        style={{
+          position: "fixed",
+          bottom: "20px",
+          right: "20px",
+          backgroundColor: "black",
+        }}
+        onClick={handleOpenModal}
+      >
+        +
+      </Fab>
+
+      <CreateNewTask 
+        isModalOpen={isModalOpen}
+        handleCloseModal={handleCloseModal}
+        newTask={newTask}
+        setNewTask={setNewTask}
+        handleSaveTask={handleSaveTask}
+      />
+     
     </PageContainer>
   );
 };
