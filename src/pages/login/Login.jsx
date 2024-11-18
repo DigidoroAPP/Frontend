@@ -7,11 +7,11 @@ import SectionIntro from "../../components/generic/SectionIntro";
 import { loginSchema } from "../../validations/LoginSchema";
 import DigiLogo from "../../components/generic/DigiLogo";
 import { EmailIcon } from "../../components/generic/Icons";
-import PageContainer from "../../containers/login/PageContainer";
 import CustomButton from "../../components/generic/CustomButton";
 import CustomLink from "../../components/generic/CustomLink";
 import PasswordToggleIcon from "../../components/login/PasswordToggleIcon";
 import { VIEWS } from "../../lib/views";
+import LoginPageContainer from "../../containers/login/LoginPageContainer";
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
@@ -34,7 +34,7 @@ const Login = () => {
   };
 
   return (
-    <PageContainer>
+    <LoginPageContainer>
       <Box
         sx={{
           p: { xs: 3, sm: 5 },
@@ -101,7 +101,7 @@ const Login = () => {
           </Grid2>
         </form>
       </Box>
-    </PageContainer>
+    </LoginPageContainer>
   );
 };
 

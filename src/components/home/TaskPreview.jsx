@@ -11,7 +11,7 @@ const TaskPreview = ({ title, date, dividerColor, link }) => {
       aria-labelledby="task-title"
     >
       <div
-        className={`w-4 h-full ${dividerColor} border-r-2 border-gray-800`}
+        className={`w-3 h-full ${dividerColor} border-r-2 border-gray-800`}
         aria-hidden="true"
       ></div>
 

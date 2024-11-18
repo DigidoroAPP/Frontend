@@ -7,11 +7,11 @@ import SectionIntro from "../../components/generic/SectionIntro";
 import { registerSchema } from "../../validations/RegisterSchema";
 import DigiLogo from "../../components/generic/DigiLogo";
 import { EmailIcon } from "../../components/generic/Icons";
-import PageContainer from "../../containers/login/PageContainer";
 import CustomButton from "../../components/generic/CustomButton";
 import CustomLink from "../../components/generic/CustomLink";
 import PasswordToggleIcon from "../../components/login/PasswordToggleIcon";
 import { VIEWS } from "../../lib/views";
+import LoginPageContainer from "../../containers/login/LoginPageContainer";
 
 const Register = () => {
   const [loading, setLoading] = useState(false);
@@ -34,7 +34,7 @@ const Register = () => {
   };
 
   return (
-    <PageContainer>
+    <LoginPageContainer>
       <Box
         sx={{
           p: { xs: 3, sm: 5 },
@@ -112,7 +112,7 @@ const Register = () => {
           </Grid2>
         </form>
       </Box>
-    </PageContainer>
+    </LoginPageContainer>
   );
 };
 

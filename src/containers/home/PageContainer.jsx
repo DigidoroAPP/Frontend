@@ -1,6 +1,6 @@
 import { Container, Paper } from "@mui/material";
 import PropTypes from "prop-types";
-import React, { useRef, useEffect } from "react";
+import React from "react";
 
 const PageContainer = ({ children, sx = {} }) => {
   return (
@@ -13,6 +13,7 @@ const PageContainer = ({ children, sx = {} }) => {
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
+        background: "#fff"
       }}
     >
       <Container

@@ -5,14 +5,21 @@ import SectionIntro from "../../components/generic/SectionIntro";
 import TaskPreview from "../../components/home/TaskPreview";
 import CustomInput from "../../components/generic/CustomInput";
 import PomodoroPreview from "../../components/home/PomodoroPreview";
+import { Title } from "@mui/icons-material";
 
 const ProtectedHome = () => {
   return (
     <PageContainer>
       <Toolbar />
-      <h2 className="text-[#202124] font-extrabold text-6xl">
-        Hola de nuevo, <span className="text-accent_color">Usuario</span>
-      </h2>
+
+      <Title
+        as="h2"
+        title=" Hola de nuevo, "
+        highlight="Usuario"
+        description="Bienvenido a nuestra plataforma"
+        hiddenTitle="Página de Inicio"
+      />
+
       <Grid2 container spacing={4}>
         <Grid2 item size={{ xs: 12, md: 6 }}>
           <SectionIntro

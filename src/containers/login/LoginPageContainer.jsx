@@ -2,7 +2,7 @@ import { Container, Paper } from "@mui/material";
 import PropTypes from "prop-types";
 import React, { useRef, useEffect } from "react";
 
-const PageContainer = ({ children, sx = {} }) => {
+const LoginPageContainer = ({ children, sx = {} }) => {
   const gradientRef = useRef();
   let currentDeg = 50;
 
@@ -56,9 +56,9 @@ const PageContainer = ({ children, sx = {} }) => {
   );
 };
 
-PageContainer.propTypes = {
+LoginPageContainer.propTypes = {
   children: PropTypes.node.isRequired,
   sx: PropTypes.object,
 };
 
-export default PageContainer;
+export default LoginPageContainer;
