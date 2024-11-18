@@ -2,9 +2,10 @@ import { Container, Paper } from "@mui/material";
 import PropTypes from "prop-types";
 import React from "react";
 
-const PageContainer = ({ children, sx = {} }) => {
+const LoginPageContainer = ({ children, sx = {} }) => {
   return (
     <Paper
+      className="!background-gradient"
       sx={{
         p: { xs: 0, sm: 2 },
         boxShadow: "none",
@@ -13,7 +14,6 @@ const PageContainer = ({ children, sx = {} }) => {
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        background: "#fff"
       }}
     >
       <Container
@@ -21,6 +21,7 @@ const PageContainer = ({ children, sx = {} }) => {
           flex: 1,
           display: "flex",
           flexDirection: "column",
+          justifyContent: "center",
           ...sx,
         }}
       >
@@ -30,9 +31,9 @@ const PageContainer = ({ children, sx = {} }) => {
   );
 };
 
-PageContainer.propTypes = {
+LoginPageContainer.propTypes = {
   children: PropTypes.node.isRequired,
   sx: PropTypes.object,
 };
 
-export default PageContainer;
+export default LoginPageContainer;
