@@ -1,8 +1,11 @@
-import { Container, Paper } from "@mui/material";
+import { Container, Paper, Toolbar, useMediaQuery } from "@mui/material";
 import PropTypes from "prop-types";
 import React from "react";
+import Sidebar from "../../components/sidebar/Sidebar";
 
 const PageContainer = ({ children, sx = {} }) => {
+  const isMobile = useMediaQuery("(max-width:600px)");
+
   return (
     <Paper
       sx={{
@@ -13,17 +16,22 @@ const PageContainer = ({ children, sx = {} }) => {
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        background: "#fff"
+        background: "#fff",
       }}
     >
+      <Sidebar horizontalOrientation={isMobile} />
+
       <Container
         sx={{
           flex: 1,
           display: "flex",
           flexDirection: "column",
+          paddingLeft: { xs: isMobile ? 4 : 14 },
+          paddingBottom: { xs: isMobile ? 14 : 0 },
           ...sx,
         }}
       >
+        <Toolbar />
         {children}
       </Container>
     </Paper>

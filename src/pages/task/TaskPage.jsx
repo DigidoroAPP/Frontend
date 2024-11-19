@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import PageContainer from "../../containers/home/PageContainer";
 import SectionIntro from "../../components/generic/SectionIntro";
-import { Grid2, Toolbar, Fab } from "@mui/material";
+import { Grid2, Fab } from "@mui/material";
 import Title from "../../components/generic/Title";
 import Column from "../../containers/task/Column";
 import CreateNewTask from "../../containers/task/CreateNewTask";
@@ -142,8 +142,6 @@ const TaskPage = () => {
 
   return (
     <PageContainer>
-      <Toolbar />
-
       <Title
         title="Tus"
         highlight="tareas"
@@ -199,14 +197,13 @@ const TaskPage = () => {
         +
       </Fab>
 
-      <CreateNewTask 
+      <CreateNewTask
         isModalOpen={isModalOpen}
         handleCloseModal={handleCloseModal}
         newTask={newTask}
         setNewTask={setNewTask}
         handleSaveTask={handleSaveTask}
       />
-     
     </PageContainer>
   );
 };

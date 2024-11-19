@@ -14,11 +14,11 @@ function App() {
       <BrowserRouter>
         <ThemeProvider theme={theme}>
           <Routes>
-            <Route path={VIEWS.home}  element={<Home />} />
-            <Route path={VIEWS.login}  element={<Login />} />
-            <Route path={VIEWS.register}  element={<Register />} />
-            <Route path={VIEWS.securityHome}  element={<ProtectedHome />} />
-            <Route path={VIEWS.tasks}  element={<TaskPage />} />
+            <Route path={VIEWS.home} element={<Home />} />
+            <Route path={VIEWS.login} element={<Login />} />
+            <Route path={VIEWS.register} element={<Register />} />
+            <Route path={VIEWS.securityHome} element={<ProtectedHome />} />
+            <Route path={VIEWS.tasks} element={<TaskPage />} />
           </Routes>
 
           <CssBaseline />
