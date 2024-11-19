@@ -33,7 +33,7 @@ const Column = React.forwardRef(
       <div
         ref={ref}
         className={clsx(
-          "p-4 bg-tertiary_color border-4 border-tertiary_color rounded-lg",
+          "p-4 bg-tertiary_color border-4 border-tertiary_color rounded-lg transition-all duration-300",
           predictedColumn === columnType && "!border-accent_color"
         )}
       >
