@@ -1,3 +1,45 @@
 import axios from "axios";
 import { toast } from "sonner";
+import { handleError } from "../lib/utils/errorHandler";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+export const login = async (email, password) => {
+  try {
+    const response = await axios.post(`${API_URL}auth/login`, {
+      email,
+      password,
+    });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const register = async (name, email, password) => {
+  try {
+    const response = await axios.post(`${API_URL}auth/register`, {
+      name,
+      email,
+      password,
+    });
+    return response.data;
+  } catch (error) {
+    const errorMessage = handleError(error);
+
+    console.error(error);
+    toast.error(errorMessage);
+  }
+};
+
+export const getMe = async () => {
+  try {
+    const response = await axios.get(`${API_URL}auth/me`);
+    return response.data;
+  } catch (error) {
+    const errorMessage = handleError(error);
+
+    console.error(error);
+    toast.error(errorMessage);
+  }
+};

@@ -8,6 +8,7 @@ import ProtectedHome from "./pages/home/ProtectedHome";
 import { VIEWS } from "./lib/views";
 import TaskPage from "./pages/task/TaskPage";
 import { AuthProvider } from "./context/AuthContext";
+import { Toaster } from "sonner";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
             </Routes>
 
             <CssBaseline />
+            <Toaster />
           </ThemeProvider>
         </BrowserRouter>
       </AuthProvider>
