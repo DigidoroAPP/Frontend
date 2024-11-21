@@ -28,9 +28,17 @@ const Login = () => {
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = (data) => {
-    // TODO Conectar con los servicios SA. de SV.
-    console.log(data);
+  const onSubmit = async (data) => {
+    const { name, email } = data;
+
+    try {
+      setLoading(true);
+      await loginUser(name, email);
+    } catch (error) {
+      console.error("Error al registrarse", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
