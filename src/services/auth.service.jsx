@@ -38,9 +38,15 @@ export const register = async (name, email, password) => {
   }
 };
 
-export const getMe = async () => {
+export const getMe = async (token) => {
   try {
-    const response = await axios.get(`${API_URL}auth/me`);
+    const response = await axios.get(`${API_URL}auth/me`, {
+      headers: {
+        Authorization: `${import.meta.env.VITE_API_PREFIX} ${token}`,
+        Accept: "application/json",
+      },
+    });
+
     return response.data;
   } catch (error) {
     const errorMessage = handleError(error);

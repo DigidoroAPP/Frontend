@@ -5,20 +5,23 @@ import SectionIntro from "../../components/generic/SectionIntro";
 import TaskPreview from "../../components/home/TaskPreview";
 import CustomInput from "../../components/generic/CustomInput";
 import PomodoroPreview from "../../components/home/PomodoroPreview";
-import { Title } from "@mui/icons-material";
+import { useAuth } from "../../context/AuthContext";
+import Title from "../../components/generic/Title";
 
 const ProtectedHome = () => {
+  const { user, loading } = useAuth();
+  
   return (
     <PageContainer>
-      <Toolbar />
-
       <Title
         as="h2"
-        title=" Hola de nuevo, "
-        highlight="Usuario"
+        title="Hola de nuevo, "
+        highlight={user?.name || "Usuario"}
         description="Bienvenido a nuestra plataforma"
         hiddenTitle="Página de Inicio"
       />
+
+      <p className="bg-red-600">{JSON.stringify(user)}</p>
 
       <Grid2 container spacing={4}>
         <Grid2 item size={{ xs: 12, md: 6 }}>
