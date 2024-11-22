@@ -3,7 +3,12 @@ export const handleError = (error) => {
 
   if (error.response) {
     const { data } = error.response;
-    message = data.errors[0];
+
+    if (data.errors) {
+      message = data.errors[0];
+    } else {
+      message = data.message;
+    }
   } else if (error.request) {
     message = "No se pudo conectar con el servidor";
   } else {

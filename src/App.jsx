@@ -13,8 +13,8 @@ import { Toaster } from "sonner";
 function App() {
   return (
     <>
-      <AuthProvider>
-        <BrowserRouter>
+      <BrowserRouter>
+        <AuthProvider>
           <ThemeProvider theme={theme}>
             <Routes>
               <Route path={VIEWS.home} element={<Home />} />
@@ -25,10 +25,10 @@ function App() {
             </Routes>
 
             <CssBaseline />
-            <Toaster />
+            <Toaster position="top-right" />
           </ThemeProvider>
-        </BrowserRouter>
-      </AuthProvider>
+        </AuthProvider>
+      </BrowserRouter>
     </>
   );
 }

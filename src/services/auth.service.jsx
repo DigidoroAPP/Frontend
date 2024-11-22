@@ -12,7 +12,10 @@ export const login = async (email, password) => {
     });
     return response.data;
   } catch (error) {
+    const errorMessage = handleError(error);
+
     console.error(error);
+    toast.error(errorMessage);
   }
 };
 
@@ -23,12 +26,15 @@ export const register = async (name, email, password) => {
       email,
       password,
     });
-    return response.data;
+
+    return true;
   } catch (error) {
     const errorMessage = handleError(error);
 
     console.error(error);
     toast.error(errorMessage);
+
+    return false;
   }
 };
 

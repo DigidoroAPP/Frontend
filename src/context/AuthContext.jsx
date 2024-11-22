@@ -1,11 +1,15 @@
 import React, { useEffect, useState, createContext } from "react";
-import { getMe, login, register } from "../services/auth.service.jsx";
+import { login, getMe, register } from "../services/auth.service.jsx";
+import { useNavigate } from "react-router-dom";
+import { VIEWS } from "../lib/views.js";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const checkToken = async () => {
@@ -23,14 +27,33 @@ export const AuthProvider = ({ children }) => {
 
   const registerUser = async (name, email, password) => {
     const user = await register(name, email, password);
-    setUser(user);
+
+    if (user) {
+      setUser(user);
+      navigate(VIEWS.login);
+    }
   };
 
   const loginUser = async (email, password) => {
     const user = await login(email, password);
-    setUser(user);
+    if (user) {
+      setUser(user);
 
-    localStorage.setItem("session", user.token);
+      localStorage.setItem("session", user.token);
+      // fetchUser(); TODO: Para despues
+      navigate("/");
+    }
+  };
+
+  const fetchUser = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await getMe(token);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const logout = () => {
@@ -38,7 +61,7 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
-  const isAuthenticated = () => !!user;
+  const isAuthenticated = () => user;
 
   return (
     <AuthContext.Provider
