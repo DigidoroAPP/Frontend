@@ -12,8 +12,13 @@ import CustomLink from "../../components/generic/CustomLink";
 import PasswordToggleIcon from "../../components/login/PasswordToggleIcon";
 import { VIEWS } from "../../lib/views";
 import LoginPageContainer from "../../containers/login/LoginPageContainer";
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigateTo = useNavigate();
+  const { loginUser, isAuthenticated } = useAuth();
+
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const togglePasswordVisibility = () => {
@@ -28,9 +33,17 @@ const Login = () => {
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = (data) => {
-    // TODO Conectar con los servicios SA. de SV.
-    console.log(data);
+  const onSubmit = async (data) => {
+    const { email, password } = data;
+
+    try {
+      setLoading(true);
+      await loginUser(email, password);
+    } catch (error) {
+      console.error("Error al registrarse", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -87,7 +100,7 @@ const Login = () => {
             </Grid2>
 
             <Grid2 item size={12}>
-              <CustomButton type="submit" className="mt-4">
+              <CustomButton type="submit" className="mt-4" loading={loading}>
                 Iniciar sesión
               </CustomButton>
             </Grid2>
