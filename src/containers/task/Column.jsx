@@ -1,4 +1,3 @@
-import { clsx } from "clsx";
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import PropTypes from "prop-types";
@@ -13,18 +12,20 @@ const Column = React.forwardRef(
       onDrag,
       onDragEnd,
       onCheckboxChange,
+      onTaskClick,
       columnType,
     },
     ref
   ) => {
     const [draggingTaskId, setDraggingTaskId] = useState(null);
     const [removingTaskId, setRemovingTaskId] = useState(null);
+    const [isDragging, setIsDragging] = useState(false);
 
-    // Esta funcion se encarga de manejar el cambio de estado de la tarea
+    // Esta función se encarga de manejar el cambio de estado de la tarea
     const handleCheckboxChange = (task) => {
-      setRemovingTaskId(task.id); 
+      setRemovingTaskId(task._id);
       setTimeout(() => {
-        onCheckboxChange(task); 
+        onCheckboxChange(task);
         setRemovingTaskId(null);
       }, 300);
     };
@@ -32,10 +33,9 @@ const Column = React.forwardRef(
     return (
       <div
         ref={ref}
-        className={clsx(
-          "p-4 bg-tertiary_color border-4 border-tertiary_color rounded-lg transition-all duration-300",
+        className={`p-4 bg-tertiary_color border-4 border-tertiary_color rounded-lg transition-all duration-300 ${
           predictedColumn === columnType && "!border-accent_color"
-        )}
+        }`}
       >
         {tasks.length === 0 ? (
           <div className="flex flex-col items-center justify-center text-gray-500 text-sm gap-3">
@@ -55,26 +55,32 @@ const Column = React.forwardRef(
             <AnimatePresence>
               {tasks.map((task) => (
                 <motion.div
-                  key={task.id}
+                  key={task._id}
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={
-                    removingTaskId === task.id
-                      ? { opacity: 0, y: 10 } 
-                      : {}
+                    removingTaskId === task._id ? { opacity: 0, y: 10 } : {}
                   }
                   drag
                   dragSnapToOrigin
-                  onDragStart={() => setDraggingTaskId(task.id)}
+                  onDragStart={() => {
+                    setDraggingTaskId(task._id);
+                    setIsDragging(true);
+                  }}
                   onDrag={(event) => onDrag(event, columnType)}
                   onDragEnd={(event) => {
-                    onDragEnd(event, task);
                     setDraggingTaskId(null);
+                    onDragEnd(event, task);
+                    setTimeout(() => setIsDragging(false), 100);
                   }}
-                  className={clsx(
-                    "cursor-pointer",
-                    draggingTaskId === task.id && "z-[1000]"
-                  )}
+                  className={`cursor-pointer ${
+                    draggingTaskId === task._id && "z-[1000]"
+                  }`}
+                  onClick={() => {
+                    if (!isDragging && event.target.type !== "checkbox") {
+                      onTaskClick(task); // Solo permite clic si no hay arrastre
+                    }
+                  }}
                 >
                   <TaskItem
                     {...task}
@@ -98,6 +104,7 @@ Column.propTypes = {
   onDrag: PropTypes.func.isRequired,
   onDragEnd: PropTypes.func.isRequired,
   onCheckboxChange: PropTypes.func.isRequired,
+  onTaskClick: PropTypes.func.isRequired,
   columnType: PropTypes.string.isRequired,
 };
 

@@ -13,10 +13,9 @@ import PasswordToggleIcon from "../../components/login/PasswordToggleIcon";
 import { VIEWS } from "../../lib/views";
 import LoginPageContainer from "../../containers/login/LoginPageContainer";
 import { useAuth } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
 
 const Register = () => {
-  const { registerUser, isAuthenticated } = useAuth();
+  const { registerUser } = useAuth();
   const [loading, setLoading] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);

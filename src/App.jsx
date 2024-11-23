@@ -9,6 +9,7 @@ import { VIEWS } from "./lib/views";
 import TaskPage from "./pages/task/TaskPage";
 import { AuthProvider } from "./context/AuthContext";
 import { Toaster } from "sonner";
+import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
               <Route path={VIEWS.register} element={<Register />} />
               <Route path={VIEWS.securityHome} element={<ProtectedHome />} />
               <Route path={VIEWS.tasks} element={<TaskPage />} />
+              <Route path="*" element={<NotFoundPage />} />
             </Routes>
 
             <CssBaseline />

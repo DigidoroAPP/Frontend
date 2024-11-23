@@ -16,8 +16,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       const token = localStorage.getItem("session");
       if (token) {
-        // const user = await getMe();
-        // setUser(user);
+        await fetchUser();
       }
       setLoading(false);
     };
@@ -40,15 +39,17 @@ export const AuthProvider = ({ children }) => {
       setUser(user);
 
       localStorage.setItem("session", user.token);
-      // fetchUser(); TODO: Para despues
-      navigate("/");
+      fetchUser();
+      navigate(VIEWS.securityHome);
     }
   };
 
   const fetchUser = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("session");
       const response = await getMe(token);
+
+      setUser((prev) => ({ ...prev,token, ...response }));
     } catch (error) {
       console.error(error);
     } finally {
