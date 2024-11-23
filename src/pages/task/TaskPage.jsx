@@ -1,72 +1,120 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import PageContainer from "../../containers/home/PageContainer";
 import SectionIntro from "../../components/generic/SectionIntro";
-import { Grid2, Fab } from "@mui/material";
+import {
+  Grid2,
+  Fab,
+  DialogActions,
+  DialogContentText,
+  DialogContent,
+  DialogTitle,
+  Dialog,
+  Button,
+} from "@mui/material";
 import Title from "../../components/generic/Title";
 import Column from "../../containers/task/Column";
 import CreateNewTask from "../../containers/task/CreateNewTask";
+import {
+  createTask,
+  getTasks,
+  updateTask,
+  deleteTask,
+} from "../../services/task.sevice";
+import { useAuth } from "../../context/AuthContext";
+import { TODO_STATE } from "../../lib/const";
 
 const TaskPage = () => {
-  const [pendingTasks, setPendingTasks] = useState([
-    {
-      id: 1,
-      title: "Reunión de equipo",
-      date: "Hoy, 10:00 am",
-      color: "#f00",
-      isChecked: false,
-    },
-    {
-      id: 2,
-      title: "Planificación semanal",
-      date: "Mañana, 3:00 pm",
-      color: "#0f0",
-      isChecked: false,
-    },
-  ]);
+  const [loadingFetch, setLoadingFetch] = useState(true);
+  const { user, loading } = useAuth();
 
-  const [completedTasks, setCompletedTasks] = useState([
-    {
-      id: 3,
-      title: "Reporte mensual",
-      date: "Ayer, 2:00 pm",
-      color: "#00f",
-      isChecked: true,
-    },
-  ]);
-
+  const [pendingTasks, setPendingTasks] = useState([]);
+  const [completedTasks, setCompletedTasks] = useState([]);
   const [predictedColumn, setPredictedColumn] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newTask, setNewTask] = useState({ title: "", color: "#000" });
+  const [currentTask, setCurrentTask] = useState(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const pendingRef = useRef(null);
   const completedRef = useRef(null);
 
-  const removeDuplicates = (tasks) => {
-    const uniqueTasks = tasks.filter(
-      (task, index, self) => self.findIndex((t) => t.id === task.id) === index
-    );
-    return uniqueTasks;
+  useEffect(() => {
+    if (loading) return;
+
+    const fetchTasks = async () => {
+      setLoadingFetch(true);
+      try {
+        const tasks = await getTasks(user?.token);
+
+        // Separación de tareas pendientes y completadas
+        const pending = tasks.filter(
+          (task) => task.state === TODO_STATE.PENDING
+        );
+        const completed = tasks.filter(
+          (task) => task.state === TODO_STATE.COMPLETE
+        );
+
+        setPendingTasks(pending);
+        setCompletedTasks(completed);
+      } catch (error) {
+        console.error("Error al obtener las tareas", error);
+      } finally {
+        setLoadingFetch(false);
+      }
+    };
+
+    fetchTasks();
+  }, [loading, user?.token]);
+
+  const moveTask = async (task, toCompleted, revertState = false) => {
+    const originalState = task.state;
+    const updatedState = toCompleted ? TODO_STATE.COMPLETE : TODO_STATE.PENDING;
+
+    // Actualiza el estado de la tarea en el UI
+    if (!revertState) {
+      if (toCompleted) {
+        setPendingTasks((prev) => prev.filter((t) => t._id !== task._id));
+        setCompletedTasks((prev) => [
+          ...prev,
+          { ...task, state: updatedState },
+        ]);
+      } else {
+        setCompletedTasks((prev) => prev.filter((t) => t._id !== task._id));
+        setPendingTasks((prev) => [...prev, { ...task, state: updatedState }]);
+      }
+    }
+
+    try {
+      const updatedTask = await updateTask(
+        task._id,
+        { state: updatedState },
+        user?.token
+      );
+      // Actualiza el estado de la tarea en el UI
+      if (toCompleted) {
+        setCompletedTasks((prev) => [
+          ...prev.filter((t) => t._id !== task._id),
+          updatedTask,
+        ]);
+      } else {
+        setPendingTasks((prev) => [
+          ...prev.filter((t) => t._id !== task._id),
+          updatedTask,
+        ]);
+      }
+    } catch (error) {
+      console.error("Error al actualizar el estado de la tarea", error);
+
+      if (!revertState) {
+        moveTask(task, !toCompleted, true);
+      }
+    } finally {
+      setPredictedColumn(null);
+    }
   };
 
-  const moveTask = (task, toCompleted) => {
-    if (toCompleted) {
-      // setPendingTasks((prev) => prev.filter((t) => t.id !== task.id));
-      // setCompletedTasks((prev) => [...prev, { ...task, isChecked: true }]);
-      setPendingTasks((prev) =>
-        removeDuplicates(prev.filter((t) => t.id !== task.id))
-      );
-      setCompletedTasks((prev) =>
-        removeDuplicates([...prev, { ...task, isChecked: true }])
-      );
-    } else {
-      setCompletedTasks((prev) =>
-        removeDuplicates(prev.filter((t) => t.id !== task.id))
-      );
-      setPendingTasks((prev) =>
-        removeDuplicates([...prev, { ...task, isChecked: false }])
-      );
-    }
-    setPredictedColumn(null);
+  const handleTaskClick = (task) => {
+    setCurrentTask(task);
+    setIsModalOpen(true);
   };
 
   const handleDrag = (event, fromColumn) => {
@@ -82,14 +130,14 @@ const TaskPage = () => {
       draggedY > pendingBox.top &&
       draggedY < pendingBox.bottom
     ) {
-      setPredictedColumn("pending");
+      setPredictedColumn(TODO_STATE.PENDING);
     } else if (
       draggedX > completedBox.left &&
       draggedX < completedBox.right &&
       draggedY > completedBox.top &&
       draggedY < completedBox.bottom
     ) {
-      setPredictedColumn("completed");
+      setPredictedColumn(TODO_STATE.COMPLETE);
     } else {
       setPredictedColumn(fromColumn);
     }
@@ -120,25 +168,72 @@ const TaskPage = () => {
     setPredictedColumn(null);
   };
 
-  const handleCheckboxChange = (task, fromPending) => {
+  const handleCheckboxChange = async (task, fromPending) => {
     moveTask(task, fromPending);
   };
 
-  const handleOpenModal = () => setIsModalOpen(true);
+  const handleSaveTask = async ({ title, description, color }) => {
+    try {
+      const task = await createTask({ title, description, color }, user?.token);
 
-  const handleCloseModal = () => setIsModalOpen(false);
+      // Agrega la tarea a la lista correspondiente
+      if (task.state === TODO_STATE.PENDING) {
+        setPendingTasks((prev) => [...prev, task]);
+      } else if (task.state === TODO_STATE.COMPLETE) {
+        setCompletedTasks((prev) => [...prev, task]);
+      }
 
-  const handleSaveTask = () => {
-    const newTaskWithId = {
-      ...newTask,
-      id: Date.now(),
-      date: "Sin fecha",
-      isChecked: false,
-    };
-    setPendingTasks((prev) => [...prev, newTaskWithId]);
-    setNewTask({ title: "", color: "#000" });
-    handleCloseModal();
+      setIsModalOpen(false);
+      setCurrentTask(null);
+    } catch (error) {
+      console.error("Error al crear la tarea", error);
+    }
   };
+
+  const handleUpdateTask = async (updatedTask) => {
+    try {
+      const task = await updateTask(updatedTask._id, updatedTask, user?.token);
+
+      if (task.state === TODO_STATE.PENDING) {
+        setPendingTasks((prev) =>
+          prev.map((t) => (t._id === task._id ? task : t))
+        );
+      } else if (task.state === TODO_STATE.COMPLETE) {
+        setCompletedTasks((prev) =>
+          prev.map((t) => (t._id === task._id ? task : t))
+        );
+      }
+      setIsModalOpen(false);
+      setCurrentTask(null);
+    } catch (error) {
+      console.error("Error al actualizar la tarea", error);
+    }
+  };
+
+  const handleOpenDeleteDialog = () => {
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setIsDeleteDialogOpen(false);
+  };
+
+  const handleDeleteTask = async () => {
+    try {
+      await deleteTask(currentTask._id, user?.token);
+      setPendingTasks((prev) => prev.filter((t) => t._id !== currentTask._id));
+      setCompletedTasks((prev) =>
+        prev.filter((t) => t._id !== currentTask._id)
+      );
+      setIsDeleteDialogOpen(false);
+      setIsModalOpen(false);
+      setCurrentTask(null);
+    } catch (error) {
+      console.error("Error al eliminar la tarea", error);
+    }
+  };
+
+  if (loadingFetch) return <p>Cargando...</p>;
 
   return (
     <PageContainer>
@@ -160,10 +255,11 @@ const TaskPage = () => {
             predictedColumn={predictedColumn}
             tasks={pendingTasks}
             ref={pendingRef}
-            onDrag={(event) => handleDrag(event, "pending")}
+            onDrag={(event) => handleDrag(event, TODO_STATE.PENDING)}
             onDragEnd={(event, task) => handleDragEnd(event, task, true)}
             onCheckboxChange={(task) => handleCheckboxChange(task, true)}
-            columnType="pending"
+            onTaskClick={handleTaskClick}
+            columnType={TODO_STATE.PENDING}
           />
         </Grid2>
         <Grid2 item size={{ xs: 12, md: 6 }}>
@@ -176,10 +272,11 @@ const TaskPage = () => {
             predictedColumn={predictedColumn}
             tasks={completedTasks}
             ref={completedRef}
-            onDrag={(event) => handleDrag(event, "completed")}
+            onDrag={(event) => handleDrag(event, TODO_STATE.COMPLETE)}
             onDragEnd={(event, task) => handleDragEnd(event, task, false)}
             onCheckboxChange={(task) => handleCheckboxChange(task, false)}
-            columnType="completed"
+            onTaskClick={handleTaskClick}
+            columnType={TODO_STATE.COMPLETE}
           />
         </Grid2>
       </Grid2>
@@ -192,18 +289,43 @@ const TaskPage = () => {
           right: "20px",
           backgroundColor: "black",
         }}
-        onClick={handleOpenModal}
+        onClick={() => {
+          setCurrentTask(null);
+          setIsModalOpen(true);
+        }}
       >
         +
       </Fab>
 
       <CreateNewTask
         isModalOpen={isModalOpen}
-        handleCloseModal={handleCloseModal}
-        newTask={newTask}
-        setNewTask={setNewTask}
+        handleCloseModal={() => {
+          setIsModalOpen(false);
+          setCurrentTask(null);
+        }}
+        currentTask={currentTask}
         handleSaveTask={handleSaveTask}
+        handleUpdateTask={handleUpdateTask}
+        onDeleteTask={handleOpenDeleteDialog}
       />
+
+      <Dialog open={isDeleteDialogOpen} onClose={handleCloseDeleteDialog}>
+        <DialogTitle>Eliminar Tarea</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            ¿Estás seguro de que deseas eliminar esta tarea? Esta acción no se
+            puede deshacer.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDeleteDialog} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={handleDeleteTask} color="error" variant="contained">
+            Eliminar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </PageContainer>
   );
 };
