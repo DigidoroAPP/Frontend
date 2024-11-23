@@ -10,6 +10,7 @@ import TaskPage from "./pages/task/TaskPage";
 import { AuthProvider } from "./context/AuthContext";
 import { Toaster } from "sonner";
 import NotFoundPage from "./pages/NotFoundPage";
+import ProtectedRoute from "./components/routes/ProtectedRoute";
 
 function App() {
   return (
@@ -18,12 +19,15 @@ function App() {
         <AuthProvider>
           <ThemeProvider theme={theme}>
             <Routes>
-              <Route path={VIEWS.home} element={<Home />} />
               <Route path={VIEWS.login} element={<Login />} />
               <Route path={VIEWS.register} element={<Register />} />
-              <Route path={VIEWS.securityHome} element={<ProtectedHome />} />
-              <Route path={VIEWS.tasks} element={<TaskPage />} />
               <Route path="*" element={<NotFoundPage />} />
+
+              {/* Rutas publicas para usuarios logeados */}
+              <Route element={<ProtectedRoute />}>
+                <Route path={VIEWS.securityHome} element={<ProtectedHome />} />
+                <Route path={VIEWS.tasks} element={<TaskPage />} />
+              </Route>
             </Routes>
 
             <CssBaseline />

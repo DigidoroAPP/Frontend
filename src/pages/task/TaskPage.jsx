@@ -22,6 +22,8 @@ import {
 } from "../../services/task.sevice";
 import { useAuth } from "../../context/AuthContext";
 import { TODO_STATE } from "../../lib/const";
+import TaskSkeleton from "../../containers/task/TaskSkeleton";
+import { Add } from "@mui/icons-material";
 
 const TaskPage = () => {
   const [loadingFetch, setLoadingFetch] = useState(true);
@@ -233,7 +235,7 @@ const TaskPage = () => {
     }
   };
 
-  if (loadingFetch) return <p>Cargando...</p>;
+  if (loadingFetch) return <TaskSkeleton />;
 
   return (
     <PageContainer>
@@ -280,7 +282,6 @@ const TaskPage = () => {
           />
         </Grid2>
       </Grid2>
-
       <Fab
         color="primary"
         style={{
@@ -288,13 +289,15 @@ const TaskPage = () => {
           bottom: "20px",
           right: "20px",
           backgroundColor: "black",
+          width: "70px",
+          height: "70px",
         }}
         onClick={() => {
           setCurrentTask(null);
           setIsModalOpen(true);
         }}
       >
-        +
+        <Add style={{ fontSize: "35px" }} />
       </Fab>
 
       <CreateNewTask

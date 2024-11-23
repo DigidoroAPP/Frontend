@@ -1,8 +1,9 @@
 export const VIEWS = {
   login: "/login",
   register: "/register",
-  securityHome: "/home",
+  securityHome: "/",
   tasks: "/tasks",
   home: "/",
   pageNotFound: "*",
+  pomodoro: "/pomodoro",
 };
