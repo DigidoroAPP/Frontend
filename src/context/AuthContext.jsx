@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }) => {
       const token = localStorage.getItem("session");
       const response = await getMe(token);
 
-      setUser((prev) => ({ ...prev,token, ...response }));
+      setUser((prev) => ({ ...prev, token, ...response }));
     } catch (error) {
       console.error(error);
     } finally {
@@ -60,6 +60,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem("session");
     setUser(null);
+    navigate(VIEWS.login);
   };
 
   const isAuthenticated = () => user;

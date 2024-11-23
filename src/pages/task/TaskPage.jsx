@@ -22,6 +22,7 @@ import {
 } from "../../services/task.sevice";
 import { useAuth } from "../../context/AuthContext";
 import { TODO_STATE } from "../../lib/const";
+import TaskSkeleton from "../../containers/task/TaskSkeleton";
 
 const TaskPage = () => {
   const [loadingFetch, setLoadingFetch] = useState(true);
@@ -233,7 +234,7 @@ const TaskPage = () => {
     }
   };
 
-  if (loadingFetch) return <p>Cargando...</p>;
+  if (loadingFetch) return <TaskSkeleton />;
 
   return (
     <PageContainer>
