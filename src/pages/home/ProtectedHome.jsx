@@ -9,6 +9,7 @@ import { useAuth } from "../../context/AuthContext";
 import Title from "../../components/generic/Title";
 import { getTasks } from "../../services/task.sevice";
 import { VIEWS } from "../../lib/views";
+import { HeartIcon } from "../../components/generic/Icons";
 
 const ProtectedHome = () => {
   const { user, loading } = useAuth();
@@ -44,7 +45,8 @@ const ProtectedHome = () => {
         as="h2"
         title="Hola de nuevo, "
         highlight={user?.name || "Usuario"}
-        description="Bienvenido a nuestra plataforma"
+        icon={<HeartIcon width={50} height={50} />}
+        description="Te damos la bienvenida a nuestra plataforma"
         hiddenTitle="Página de Inicio"
       />
 

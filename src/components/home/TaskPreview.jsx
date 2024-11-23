@@ -13,7 +13,7 @@ const TaskPreview = ({ title, date, dividerColor, link }) => {
       aria-labelledby="task-title"
     >
       <div
-        className={`w-3 h-full border-r-2 border-gray-800`}
+        className={`w-2.5 h-full border-r-2 border-gray-800`}
         style={{
           backgroundColor: dividerColor,
         }}
@@ -27,7 +27,7 @@ const TaskPreview = ({ title, date, dividerColor, link }) => {
         >
           {title}
         </h2>
-        <p className="text-gray-800 text-sm">{timeAgo}</p>
+        <p className="text-gray-800 text-xs">{timeAgo}</p>
       </div>
     </Link>
   );
