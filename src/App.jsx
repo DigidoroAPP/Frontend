@@ -7,6 +7,7 @@ import Register from "./pages/register/Register";
 import ProtectedHome from "./pages/home/ProtectedHome";
 import { VIEWS } from "./lib/views";
 import TaskPage from "./pages/task/TaskPage";
+import { Pomodoro } from "./pages/pomodoro/Pomodoro";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
             <Route path={VIEWS.register}  element={<Register />} />
             <Route path={VIEWS.securityHome}  element={<ProtectedHome />} />
             <Route path={VIEWS.tasks}  element={<TaskPage />} />
+            <Route path={VIEWS.pomodoro} element={<Pomodoro />} />
           </Routes>
 
           <CssBaseline />

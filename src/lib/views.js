@@ -4,5 +4,6 @@ export const VIEWS = {
   securityHome: "/home",
   tasks: "/tasks",
   home: "/",
+  pomodoro: "/pomodoro",
   pageNotFound: "*",
 };
