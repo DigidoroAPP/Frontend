@@ -8,5 +8,4 @@ export const taskSchema = z.object({
   description: z
     .string()
     .min(1, { message: "La descripción no puede estar vacía" }),
-  color: z.string(),
 });

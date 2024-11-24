@@ -1,5 +1,5 @@
 import { Grid2, Box } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import CustomInput from "../../components/generic/CustomInput";
@@ -12,13 +12,25 @@ import CustomLink from "../../components/generic/CustomLink";
 import PasswordToggleIcon from "../../components/login/PasswordToggleIcon";
 import { VIEWS } from "../../lib/views";
 import LoginPageContainer from "../../containers/login/LoginPageContainer";
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import Loading from "../../components/generic/Loading";
 
 const Login = () => {
+  const navigateTo = useNavigate();
+  const { loginUser, isAuthenticated, loading: loadingUser } = useAuth();
+
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
   };
+
+  useEffect(() => {
+    if (isAuthenticated()) {
+      navigateTo(VIEWS.securityHome);
+    }
+  }, [isAuthenticated, navigateTo]);
 
   const {
     register,
@@ -28,10 +40,26 @@ const Login = () => {
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = (data) => {
-    // TODO Conectar con los servicios SA. de SV.
-    console.log(data);
+  const onSubmit = async (data) => {
+    const { email, password } = data;
+
+    try {
+      setLoading(true);
+      await loginUser(email, password);
+    } catch (error) {
+      console.error("Error al registrarse", error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (loadingUser) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-gray-100">
+        <Loading />
+      </div>
+    );
+  }
 
   return (
     <LoginPageContainer>
@@ -87,7 +115,7 @@ const Login = () => {
             </Grid2>
 
             <Grid2 item size={12}>
-              <CustomButton type="submit" className="mt-4">
+              <CustomButton type="submit" className="mt-4" loading={loading}>
                 Iniciar sesión
               </CustomButton>
             </Grid2>

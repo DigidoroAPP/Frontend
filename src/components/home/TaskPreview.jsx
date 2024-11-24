@@ -1,8 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
+import { getTimeAgo } from "../../lib/utils/getTimeAgo";
 
 const TaskPreview = ({ title, date, dividerColor, link }) => {
+  const timeAgo = getTimeAgo(date);
   return (
     <Link
       to={link}
@@ -11,7 +13,10 @@ const TaskPreview = ({ title, date, dividerColor, link }) => {
       aria-labelledby="task-title"
     >
       <div
-        className={`w-3 h-full ${dividerColor} border-r-2 border-gray-800`}
+        className={`w-2.5 h-full border-r-2 border-gray-800`}
+        style={{
+          backgroundColor: dividerColor,
+        }}
         aria-hidden="true"
       ></div>
 
@@ -22,7 +27,7 @@ const TaskPreview = ({ title, date, dividerColor, link }) => {
         >
           {title}
         </h2>
-        <p className="text-gray-800 text-sm">{date}</p>
+        <p className="text-gray-800 text-xs">{timeAgo}</p>
       </div>
     </Link>
   );

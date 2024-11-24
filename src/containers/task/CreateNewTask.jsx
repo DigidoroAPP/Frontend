@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Modal, Box, Button, FormLabel } from "@mui/material";
@@ -6,28 +6,53 @@ import PropTypes from "prop-types";
 import { CirclePicker } from "react-color";
 import { taskSchema } from "../../validations/TaskSchema";
 import CustomInput from "../../components/generic/CustomInput";
+import { DeleteOutline } from "@mui/icons-material";
 
 const CreateNewTask = ({
   isModalOpen,
   handleCloseModal,
-  newTask,
-  setNewTask,
+  currentTask,
   handleSaveTask,
+  handleUpdateTask,
+  onDeleteTask,
 }) => {
+  const [color, setColor] = React.useState("#f44336");
+
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
+    reset,
   } = useForm({
     resolver: zodResolver(taskSchema),
   });
 
-  const onSubmit = (data) => {
-    console.log(data);
+  // Load the task details into the form when editing
+  useEffect(() => {
+    if (currentTask) {
+      setValue("title", currentTask.title);
+      setValue("description", currentTask.description);
+      setColor(currentTask.color || "#000");
+    } else {
+      reset(); // Clear the form for a new task
+      setColor("#f44336");
+    }
+  }, [currentTask, setValue, reset]);
+
+  const onSubmit = async (data) => {
+    const { title, description } = data;
+    if (currentTask) {
+      // Update the existing task
+      handleUpdateTask({ ...currentTask, title, description, color });
+    } else {
+      // Create a new task
+      handleSaveTask({ title, description, color });
+    }
   };
 
   const handleColorChange = (color) => {
-    setNewTask((prev) => ({ ...prev, color: color.hex }));
+    setColor(color.hex);
   };
 
   return (
@@ -38,7 +63,7 @@ const CreateNewTask = ({
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          maxWidth: 500,
+          maxWidth: 550,
           width: "95%",
           bgcolor: "background.paper",
           boxShadow: 24,
@@ -72,7 +97,7 @@ const CreateNewTask = ({
 
           <div>
             <FormLabel
-              htmlFor={name}
+              htmlFor="color"
               sx={{
                 color: "#202124",
                 fontWeight: "800",
@@ -86,21 +111,27 @@ const CreateNewTask = ({
 
             <CirclePicker
               width="100%"
-              color={newTask.color}
+              color={color}
               onChangeComplete={handleColorChange}
             />
           </div>
 
-          <Box mt={2} display="flex" justifyContent="flex-end">
+          <Box mt={2} display="flex" justifyContent="flex-end" gap={2} flexWrap="wrap">
+            {currentTask && (
+              <Button
+                variant="outlined"
+                color="error"
+                onClick={onDeleteTask}
+                startIcon={<DeleteOutline />}
+              >
+                Eliminar Tarea
+              </Button>
+            )}
             <Button onClick={handleCloseModal} style={{ marginRight: "8px" }}>
               Cancelar
             </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleSaveTask}
-            >
-              Guardar
+            <Button type="submit" variant="contained" color="primary">
+              {currentTask ? "Actualizar" : "Guardar"}
             </Button>
           </Box>
         </form>
@@ -112,9 +143,10 @@ const CreateNewTask = ({
 CreateNewTask.propTypes = {
   isModalOpen: PropTypes.bool.isRequired,
   handleCloseModal: PropTypes.func.isRequired,
-  newTask: PropTypes.object.isRequired,
-  setNewTask: PropTypes.func.isRequired,
+  currentTask: PropTypes.object,
   handleSaveTask: PropTypes.func.isRequired,
+  handleUpdateTask: PropTypes.func.isRequired,
+  onDeleteTask: PropTypes.func.isRequired,
 };
 
 export default CreateNewTask;

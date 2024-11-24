@@ -6,6 +6,7 @@ const Title = ({
   as: Tag = "h2",
   title,
   highlight,
+  icon,
   hiddenTitle,
   description,
   center = false,
@@ -14,16 +15,14 @@ const Title = ({
   ...props
 }) => {
   return (
-    <div
-      {...props}
-      className={clsx(className, center && "text-center")}
-    >
+    <div {...props} className={clsx(className, center && "text-center")}>
       {hiddenTitle && <h1 className="sr-only">{hiddenTitle}</h1>}
 
-      <Tag
-        className="text-[#202124] font-extrabold text-6xl"
-      >
-        {title} <span className="text-accent_color">{highlight}</span>
+      <Tag className="text-[#202124] font-extrabold text-6xl">
+        {title}{" "}
+        <span className="text-accent_color inline-flex items-center gap-4">
+          {highlight} {icon && <span className="inline-block">{icon}</span>}
+        </span>
       </Tag>
 
       {description && (
@@ -33,9 +32,7 @@ const Title = ({
       )}
 
       {children && (
-        <div className="text-lg text-neutral-300 mt-1">
-          {children}
-        </div>
+        <div className="text-lg text-neutral-300 mt-1">{children}</div>
       )}
     </div>
   );
@@ -45,6 +42,7 @@ Title.propTypes = {
   as: PropTypes.string,
   title: PropTypes.string.isRequired,
   highlight: PropTypes.string,
+  icon: PropTypes.node, 
   hiddenTitle: PropTypes.string,
   description: PropTypes.string,
   center: PropTypes.bool,
