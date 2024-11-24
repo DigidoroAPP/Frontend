@@ -7,6 +7,7 @@ import Register from "./pages/register/Register";
 import ProtectedHome from "./pages/home/ProtectedHome";
 import { VIEWS } from "./lib/views";
 import TaskPage from "./pages/task/TaskPage";
+import { Pomodoro } from "./pages/pomodoro/Pomodoro";
 import { AuthProvider } from "./context/AuthContext";
 import { Toaster } from "sonner";
 import NotFoundPage from "./pages/NotFoundPage";
@@ -27,6 +28,7 @@ function App() {
               <Route element={<ProtectedRoute />}>
                 <Route path={VIEWS.securityHome} element={<ProtectedHome />} />
                 <Route path={VIEWS.tasks} element={<TaskPage />} />
+                <Route path={VIEWS.pomodoro} element={<Pomodoro />} />
               </Route>
             </Routes>
 
