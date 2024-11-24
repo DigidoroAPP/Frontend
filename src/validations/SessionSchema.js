@@ -1,12 +1,7 @@
 import { z } from "zod";
 
 export const sessionSchema = z.object({
-  title: z
-    .string()
-    .min(1, { message: "El título no puede estar vacío" })
-    .max(50, { message: "El título no puede exceder los 50 caracteres" }),
-  session: z
-    .number()
-    .min(1, { message: "El número de sesiones debe ser al menos 1" }),
-  color: z.string(),
+  tasks: z
+    .array(z.object({ _id: z.string(), title: z.string() }))
+    .min(1, { message: "Debes seleccionar al menos una tarea" }),
 });
