@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import PageContainer from '../../containers/home/PageContainer'
 import { Fab, Grid2, Tab, Tabs } from '@mui/material'
 import Title from '../../components/generic/Title'
@@ -7,14 +7,16 @@ import { Counter } from '../../components/pomodoro/counter'
 import PlayArrowOutlinedIcon from '@mui/icons-material/PlayArrowOutlined';
 import ReplayIcon from '@mui/icons-material/Replay';
 import SectionIntro from '../../components/generic/SectionIntro'
-import { SesionItem } from '../../components/pomodoro/sesionItem'
+import TaskItem from '../../components/task/TaskItem'
 import PauseCircleOutlineOutlinedIcon from '@mui/icons-material/PauseCircleOutlineOutlined';
 import CreateNewPomodoro from '../../containers/pomodoro/CreateNewPomodoro'
-import { TIME } from '../../lib/const'
+import { TIME, TODO_STATE } from '../../lib/const'
 import { useAuth } from '../../context/AuthContext'
 import { getAllPomodoros, patchPomodoroStateAndTime, patchTodosInPomodoros } from '../../services/pomo.service'
-import { getTasks } from '../../services/task.sevice'
+import { getTasks, updateTask } from '../../services/task.sevice'
 import useSaveSessionOnUnload from '../../hook/useSaveSessionOnUnload'
+import { AssignmentLate } from '@mui/icons-material'
+import { div } from 'framer-motion/client'
 
 export const Pomodoro = () => {
     // Manejo del pomodoro (Segundos y minutos)
@@ -47,7 +49,8 @@ export const Pomodoro = () => {
 
                 const remoteTasks = await getTasks(user?.token);
                 if (remoteTasks) {
-                    setRemoteTasks(remoteTasks);
+                    const pendingTasks = remoteTasks.filter(task => task.state === "pending");
+                    setRemoteTasks(pendingTasks);
                 }
             } catch (error) {
                 console.error(error);
@@ -133,9 +136,28 @@ export const Pomodoro = () => {
         }
     }
 
+    const handleChangePendingTaskStatus = async (session) => {
+        try {
+            const result = await updateTask(session._id, { state: TODO_STATE.COMPLETE }, user?.token);
+            if (result) {
+                const updateTask = await getTasks(user?.token);
+                if (updateTask) {
+                    const updatedTasks = await getAllPomodoros(user?.token);
+                    if (updatedTasks) {
+                        setRemotePomodorosTasks(updatedTasks);
+                    }
+                }
+            }
+        } catch (error) {
+            console.error("Error al cambiar el estado de la tarea", error);
+        }
+    }
+
     const minutes = timeLeft > 0 ? Math.floor(timeLeft / TIME.SECONDS) : 0;
     const seconds = timeLeft > 0 ? timeLeft % TIME.SECONDS : 0;
-    
+
+
+    console.log(remoteTasksPomodoro);
     if (loadingFetch) return <p>Cargando...</p>;
 
     return (
@@ -205,7 +227,7 @@ export const Pomodoro = () => {
                     <SectionIntro
                         smaller
                         title="Sesiones"
-                        description="Mira tus tareas y comienza a trabajar"
+                        description="Termina tus tareas pendientes"
                     />
                 </Grid2>
             </Grid2>
@@ -219,17 +241,22 @@ export const Pomodoro = () => {
                                 item
                                 size={{ xs: 12, md: 6, lg: 4 }}
                             >
-                                <SesionItem
+                                <TaskItem
                                     title={session.title}
-                                    dividerColor={session.color}
-                                    onClick={() => setSelectedPomodoroTask(session)}
+                                    date={session.date}
+                                    color={session.color}
+                                    isChecked={session.state === "complete"}
+                                    onCheckboxChange={() => handleChangePendingTaskStatus(session)}
                                 />
                             </Grid2>
                         ))
                     ) : (
-                        <Grid2 item size={{ xs: 12 }}>
-                            <p className="text-center">No hay sesiones creadas</p>
-                        </Grid2>
+                        <div className='w-full p-4 bg-tertiary_color border-4 border-tertiary_color rounded-lg transition-all duration-300'>
+                            <div className="w-full flex flex-col items-center justify-center text-gray-500 text-sm gap-3">
+                                <AssignmentLate fontSize="medium" className="text-gray-400" />
+                                <p>¡No tienes tareas pendientes!</p>
+                            </div>
+                        </div>
                     )
                 }
             </Grid2>
