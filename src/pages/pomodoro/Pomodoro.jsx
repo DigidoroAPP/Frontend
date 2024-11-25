@@ -16,7 +16,7 @@ import { getAllPomodoros, patchPomodoroStateAndTime, patchTodosInPomodoros } fro
 import { getTasks, updateTask } from '../../services/task.sevice'
 import useSaveSessionOnUnload from '../../hook/useSaveSessionOnUnload'
 import { AssignmentLate } from '@mui/icons-material'
-import { div } from 'framer-motion/client'
+import PomodoroSkeleton from '../../containers/pomodoro/PomodoroSkeleton'
 
 export const Pomodoro = () => {
     // Manejo del pomodoro (Segundos y minutos)
@@ -158,7 +158,7 @@ export const Pomodoro = () => {
 
 
     console.log(remoteTasksPomodoro);
-    if (loadingFetch) return <p>Cargando...</p>;
+    if (loadingFetch) return <PomodoroSkeleton/>;
 
     return (
         <PageContainer>
