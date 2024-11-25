@@ -20,7 +20,6 @@ import PomodoroSkeleton from '../../containers/pomodoro/PomodoroSkeleton'
 
 export const Pomodoro = () => {
     // Manejo del pomodoro (Segundos y minutos)
-    const [selectedPomodoroTask, setSelectedPomodoroTask] = useState(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [value, setValue] = useState(0);
     const [timeLeft, setTimeLeft] = useState(TIME.POMODORO);
@@ -206,7 +205,7 @@ export const Pomodoro = () => {
 
             <Grid2 container spacing={2} justifyContent={"center"} alignItems={"center"} marginTop={4}>
                 <ReplayIcon onClick={handleResetButton} sx={{ fontSize: 40 }} fontSize="medium" />
-                {isPlaying && selectedPomodoroTask ? (
+                {isPlaying && remoteTasksPomodoro ? (
                     <PauseCircleOutlineOutlinedIcon
                         onClick={handlePausePlayButton}
                         sx={{ fontSize: 60 }}
