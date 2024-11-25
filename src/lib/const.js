@@ -5,7 +5,7 @@ export const TODO_STATE = {
 };
 
 export const TIME = {
-  POMODORO: 0.05 * 60,
-  SHORT_BREAK: 0.05 * 60,
+  POMODORO: 25 * 60,
+  SHORT_BREAK: 5 * 60,
   SECONDS: 60,
 }

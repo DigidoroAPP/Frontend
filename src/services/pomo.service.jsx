@@ -37,3 +37,20 @@ export const patchTodosInPomodoros = async (todos, token) => {
         toast.error(errorMessage);
     }
 }
+
+export const patchPomodoroStateAndTime = async (pomodoro, token) => {
+    try {
+        const response = await axios.patch(`${API_URL}pomodoro/state-time`, pomodoro, {
+            headers: {
+                Authorization: `${import.meta.env.VITE_API_PREFIX} ${token}`,
+                Accept: "application/json",
+            },
+        });
+        return response.data;
+    } catch (error) {
+        const errorMessage = handleError(error);
+
+        console.error(error);
+        toast.error(errorMessage);
+    }
+}
