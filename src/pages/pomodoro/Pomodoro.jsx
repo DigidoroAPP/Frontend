@@ -1,99 +1,95 @@
 import React, { useEffect, useState } from 'react'
 import PageContainer from '../../containers/home/PageContainer'
-import { Fab, Grid2, Tab, Tabs, Toolbar } from '@mui/material'
+import { Fab, Grid2, Tab, Tabs } from '@mui/material'
 import Title from '../../components/generic/Title'
 import { AnimatePresence } from 'framer-motion'
 import { Counter } from '../../components/pomodoro/counter'
 import PlayArrowOutlinedIcon from '@mui/icons-material/PlayArrowOutlined';
 import ReplayIcon from '@mui/icons-material/Replay';
 import SectionIntro from '../../components/generic/SectionIntro'
-import { SesionItem } from '../../components/pomodoro/sesionItem'
+import TaskItem from '../../components/task/TaskItem'
 import PauseCircleOutlineOutlinedIcon from '@mui/icons-material/PauseCircleOutlineOutlined';
 import CreateNewPomodoro from '../../containers/pomodoro/CreateNewPomodoro'
-import ProgressRadioButtons from '../../components/pomodoro/ProgressRadioButtons'
-
-const TIME = {
-    POMODORO: 0.05 * 60,
-    SHORT_BREAK: 0.05 * 60,
-    SECONDS: 60,
-}
+import { TIME, TODO_STATE } from '../../lib/const'
+import { useAuth } from '../../context/AuthContext'
+import { getAllPomodoros, patchPomodoroStateAndTime, patchTodosInPomodoros } from '../../services/pomo.service'
+import { getTasks, updateTask } from '../../services/task.sevice'
+import useSaveSessionOnUnload from '../../hook/useSaveSessionOnUnload'
+import { AssignmentLate } from '@mui/icons-material'
+import PomodoroSkeleton from '../../containers/pomodoro/PomodoroSkeleton'
 
 export const Pomodoro = () => {
-    const [value, setValue] = useState(0)
-    const [isPlaying, setIsPlaying] = useState(false)
-    const [taskSelected, setTaskSelected] = useState(null)
+    // Manejo del pomodoro (Segundos y minutos)
+    const [selectedPomodoroTask, setSelectedPomodoroTask] = useState(null);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [value, setValue] = useState(0);
     const [timeLeft, setTimeLeft] = useState(TIME.POMODORO);
+
+    // Para traer todo lo que se encuentra remoto y manejo de datos
+    const [remoteTasks, setRemoteTasks] = useState([]);
+    const [remoteTasksPomodoro, setRemotePomodorosTasks] = useState([]);
+    const [loadingFetch, setLoadingFetch] = useState(false);
+    const { user, loading } = useAuth();
+
+    // Manejo de estados locales 
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [newSession, setNewSession] = useState({ title: "", color: "#000", maxValue: 0, actualValue: 0 });
-    const [sessions, setSessions] = useState([
-        {
-            id: 1,
-            title: "Reporte mensual",
-            color: "#00f",
-            maxValue: 4,
-            actualValue: 0
-        },
-        {
-            id: 2,
-            title: "Reporte mensual",
-            color: "#0f0",
-            maxValue: 3,
-            actualValue: 0
+
+    useEffect(() => {
+        if (loading) return;
+
+        const fetchPomodoros = async () => {
+            setLoadingFetch(true);
+            try {
+                const remotePomodoroTasks = await getAllPomodoros(user?.token);
+                if (remotePomodoroTasks) {
+                    setRemotePomodorosTasks(remotePomodoroTasks);
+                    setTimeLeft(remotePomodoroTasks.time);
+                    setValue(remotePomodoroTasks.state === "work" ? 0 : 1);
+                }
+
+                const remoteTasks = await getTasks(user?.token);
+                if (remoteTasks) {
+                    const pendingTasks = remoteTasks.filter(task => task.state === "pending");
+                    setRemoteTasks(pendingTasks);
+                }
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoadingFetch(false);
+            }
         }
-    ]);
-
-    const handleChange = (event, newValue) => {
-        setValue(newValue)
-        if (newValue === 0) setTimeLeft(TIME.POMODORO);
-        if (newValue === 1) setTimeLeft(TIME.SHORT_BREAK);
-    }
-
-    const onTaskSelected = (values) => {
-        setTaskSelected({
-            id: values.id,
-            title: values.title,
-            color: values.color,
-            maxValue: values.maxValue,
-            actualValue: values.actualValue
-        })
-
-        setValue(0);
-        setTimeLeft(TIME.POMODORO);
-        setIsPlaying(false);
-    }
-
-    const handlePausePlayButton = () => {
-        if (!taskSelected) return
-        setIsPlaying(!isPlaying)
-    }
-
-    const handleResetButton = () => {
-        if (value === 0) {
-            setTimeLeft(TIME.POMODORO);
-        } else if (value === 1) {
-            setTimeLeft(TIME.SHORT_BREAK);
-        }
-    }
+        fetchPomodoros();
+    }, [loading, user])
 
     const handleModal = () => {
         setIsModalOpen(!isModalOpen);
     }
 
-    const handleSaveSession = () => {
-        setSessions((prevSessions) => [
-            ...prevSessions,
-            {
-                ...newSession,
-                id: Date.now(),
-            },
-        ]);
-        setNewSession({ title: "", maxValue: 0, color: "#000", actualValue: 0 });
-        handleModal();
-    };
+    const handleSavePomodoroTask = async ({ tasks }) => {
+        try {
+            const id_todos = tasks.map(task => task._id);
+            const newPomodoroTask = await patchTodosInPomodoros({ id_todos }, user?.token);
+            if (newPomodoroTask) {
+                const updatedTasks = await getAllPomodoros(user?.token);
+                if (updatedTasks) {
+                    setRemotePomodorosTasks(updatedTasks);
+                }
+            }
+        } catch (error) {
+            console.error("Error al guardar la tarea", error);
+        }
+    }
 
+    // Manejo de caso cuando se cierre sesión
+    useSaveSessionOnUnload({
+        timeLeft,
+        sessionState: value,
+        user,
+        patchPomodoroStateAndTime
+    })
+
+    // Funciones de manejo del pomodoro
     useEffect(() => {
-        if (!taskSelected) return;
-
         if (timeLeft > 0 && isPlaying) {
             const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
             return () => clearTimeout(timer);
@@ -106,29 +102,67 @@ export const Pomodoro = () => {
             } else if (value === 1) {
                 setValue(0);
                 setTimeLeft(TIME.POMODORO);
-
-                setTaskSelected((prevTask) => {
-                    const updatedTask = {
-                        ...prevTask,
-                        actualValue: prevTask.actualValue + 1,
-                    };
-
-                    if (updatedTask.actualValue >= updatedTask.maxValue) {
-                        console.log("Todos los ciclos de Pomodoro han terminado.");
-                        setIsPlaying(false);
-                    }
-
-                    return updatedTask;
-                });
             }
         }
-    }, [timeLeft, isPlaying, value, taskSelected]);
+    }, [timeLeft, isPlaying, value]);
 
-    const minutes = Math.floor(timeLeft / TIME.SECONDS);
-    const seconds = timeLeft % TIME.SECONDS;
+    const handlePausePlayButton = () => {
+        setIsPlaying(!isPlaying);
+    }
+
+    const handleResetButton = () => {
+        setIsPlaying(false);
+        if (value === 0) { setTimeLeft(1500) }
+        if (value === 1) { setTimeLeft(300) }
+    }
+
+    const handleChange = async (event, newValue) => {
+        try {
+            const state = newValue === 0 ? "work" : "break";
+            const time = newValue === 0 ? TIME.POMODORO : TIME.SHORT_BREAK;
+            const newPomodoroTask = await patchPomodoroStateAndTime({ state, time }, user?.token);
+            if (newPomodoroTask) {
+                setValue(newValue)
+                if (newValue === 0) setTimeLeft(TIME.POMODORO);
+                if (newValue === 1) setTimeLeft(TIME.SHORT_BREAK);
+
+                const updatedTasks = await getAllPomodoros(user?.token);
+                if (updatedTasks) {
+                    setRemotePomodorosTasks(updatedTasks);
+                }
+            }
+        } catch (error) {
+            console.error("Error al actualizar el estado de la sesión", error);
+        }
+    }
+
+    const handleChangePendingTaskStatus = async (session) => {
+        try {
+            const result = await updateTask(session._id, { state: TODO_STATE.COMPLETE }, user?.token);
+            if (result) {
+                const updateTask = await getTasks(user?.token);
+                if (updateTask) {
+                    const updatedTasks = await getAllPomodoros(user?.token);
+                    if (updatedTasks) {
+                        setRemotePomodorosTasks(updatedTasks);
+                    }
+                }
+            }
+        } catch (error) {
+            console.error("Error al cambiar el estado de la tarea", error);
+        }
+    }
+
+    const minutes = timeLeft > 0 ? Math.floor(timeLeft / TIME.SECONDS) : 0;
+    const seconds = timeLeft > 0 ? timeLeft % TIME.SECONDS : 0;
+
+
+    console.log(remoteTasksPomodoro);
+    if (loadingFetch) return <PomodoroSkeleton/>;
 
     return (
         <PageContainer>
+            {/* Boton de agregar */}
             <Fab
                 color="primary"
                 style={{
@@ -142,7 +176,7 @@ export const Pomodoro = () => {
                 +
             </Fab>
 
-            <Toolbar />
+            {/* Titulo de la pagina */}
             <Title
                 title="Tus"
                 highlight="pomos"
@@ -150,29 +184,15 @@ export const Pomodoro = () => {
                 hiddenTitle="Pomos de Usuario"
             />
 
-
+            {/* Parte de la cuenta regresiva */}
             <Grid2 container justifyContent={"center"} marginTop={2}>
-                <Tabs value={value} onChange={handleChange}>
-                    <Tab label="Pomo" disabled={!taskSelected} />
-                    <Tab label="Short Break" disabled={!taskSelected} />
+                <Tabs value={value} onChange={handleChange} className='rounded-xl'>
+                    <Tab label="Pomo" />
+                    <Tab label="Short Break" />
                 </Tabs>
             </Grid2>
 
-            <Grid2 container justifyContent={"center"} marginTop={2}>
-                {
-                    taskSelected && (
-                        <ProgressRadioButtons
-                            actualValue={taskSelected.actualValue}
-                            maxValue={taskSelected.maxValue}
-                        />
-                    )
-                }
-            </Grid2>
-
-
             <Grid2 container spacing={2} justifyContent={"center"} alignItems={"center"} marginTop={4}>
-
-
                 <AnimatePresence>
                     <Counter time={minutes} />
                 </AnimatePresence>
@@ -184,10 +204,9 @@ export const Pomodoro = () => {
                 </AnimatePresence>
             </Grid2>
 
-
             <Grid2 container spacing={2} justifyContent={"center"} alignItems={"center"} marginTop={4}>
                 <ReplayIcon onClick={handleResetButton} sx={{ fontSize: 40 }} fontSize="medium" />
-                {isPlaying && taskSelected ? (
+                {isPlaying && selectedPomodoroTask ? (
                     <PauseCircleOutlineOutlinedIcon
                         onClick={handlePausePlayButton}
                         sx={{ fontSize: 60 }}
@@ -202,42 +221,52 @@ export const Pomodoro = () => {
                 )}
             </Grid2>
 
+            {/* Parte de sesiones */}
             <Grid2 container spacing={4}>
                 <Grid2 item size={{ xs: 12, md: 6 }}>
                     <SectionIntro
                         smaller
                         title="Sesiones"
-                        description="Mira tus tareas completadas"
+                        description="Termina tus tareas pendientes"
                     />
                 </Grid2>
             </Grid2>
 
             <Grid2 container spacing={2}>
                 {
-                    sessions.map((session) => (
-                        <Grid2
-                            key={session.id}
-                            item
-                            size={{ xs: 12, md: 6, lg: 4 }}
-                        >
-                            <SesionItem
-                                title={session.title}
-                                dividerColor={session.color}
-                                maxValue={session.maxValue}
-                                actualValue={session.actualValue}
-                                onClick={() => onTaskSelected(session)}
-                            />
-                        </Grid2>
-                    ))
+                    remoteTasksPomodoro?.id_todos?.length > 0 ? (
+                        remoteTasksPomodoro.id_todos.map((session) => (
+                            <Grid2
+                                key={session.id}
+                                item
+                                size={{ xs: 12, md: 6, lg: 4 }}
+                            >
+                                <TaskItem
+                                    title={session.title}
+                                    date={session.date}
+                                    color={session.color}
+                                    isChecked={session.state === "complete"}
+                                    onCheckboxChange={() => handleChangePendingTaskStatus(session)}
+                                />
+                            </Grid2>
+                        ))
+                    ) : (
+                        <div className='w-full p-4 bg-tertiary_color border-4 border-tertiary_color rounded-lg transition-all duration-300'>
+                            <div className="w-full flex flex-col items-center justify-center text-gray-500 text-sm gap-3">
+                                <AssignmentLate fontSize="medium" className="text-gray-400" />
+                                <p>¡No tienes tareas pendientes!</p>
+                            </div>
+                        </div>
+                    )
                 }
             </Grid2>
 
+            {/* Modal */}
             <CreateNewPomodoro
                 isModalOpen={isModalOpen}
                 handleCloseModal={handleModal}
-                newSession={newSession}
-                setNewSession={setNewSession}
-                handleSaveSession={handleSaveSession}
+                handleSavePomodoroTask={handleSavePomodoroTask}
+                options={remoteTasks}
             />
         </PageContainer>
     )

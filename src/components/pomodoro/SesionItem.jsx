@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-export const SesionItem = ({ title, dividerColor, maxValue, actualValue, onClick }) => {
+export const SesionItem = ({ title, dividerColor, onClick }) => {
     return (
         <div
           onClick={onClick}
@@ -22,7 +22,6 @@ export const SesionItem = ({ title, dividerColor, maxValue, actualValue, onClick
             >
               {title}
             </h2>
-            <p className="text-gray-800 text-sm">{actualValue}/{maxValue}</p>
           </div>
         </div>
     )
@@ -31,8 +30,6 @@ export const SesionItem = ({ title, dividerColor, maxValue, actualValue, onClick
 SesionItem.propTypes = {
   title: PropTypes.string.isRequired,
   dividerColor: PropTypes.string.isRequired,
-  maxValue: PropTypes.number.isRequired,
-  actualValue: PropTypes.number.isRequired,
   onClick: PropTypes.func.isRequired
 }
 

@@ -1,38 +1,37 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { sessionSchema } from "../../validations/SessionSchema";
-import { Box, Button, FormLabel, Modal } from "@mui/material";
-import CustomInput from "../../components/generic/CustomInput";
-import { CirclePicker } from "react-color";
+import { Autocomplete, Box, Button, Modal, TextField } from "@mui/material";
 import PropTypes from "prop-types";
 
 const CreateNewPomodoro = ({
     isModalOpen,
     handleCloseModal,
-    newSession,
-    setNewSession,
-    handleSaveSession,
+    handleSavePomodoroTask,
+    options
 }) => {
     const {
-        register,
         handleSubmit,
+        setValue,
+        watch,
         formState: { errors },
     } = useForm({
         resolver: zodResolver(sessionSchema),
         defaultValues: {
-            title: newSession.title,
-            session: newSession.maxValue,
-            color: newSession.color,
+            tasks: [],
         },
     });
 
+    const tasks = watch("tasks");
 
-    const onSubmit = (data) => {
-        console.log(data);
+    const handleTaskSelection = (event, value) => {
+        setValue("tasks", value);
     };
 
-    const handleColorChange = (color) => {
-        setNewSession({ ...newSession, color: color.hex });
+    const onSubmit = (data) => {
+        handleSavePomodoroTask(data);
+        setValue("tasks", []);
+        handleCloseModal();
     };
 
     return (
@@ -56,54 +55,33 @@ const CreateNewPomodoro = ({
                     noValidate
                     className="space-y-6"
                 >
-                    <CustomInput
-                        innerRef={register("title")}
-                        labelText="Título"
-                        name="title"
-                        type="text"
-                        placeholder="Escribe el título de la sesión"
-                        errors={errors.title}
+                    <Autocomplete
+                        multiple
+                        options={options}
+                        getOptionLabel={(option) => option.title}
+                        onChange={handleTaskSelection}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                label="Selecciona tareas"
+                                error={!!errors.tasks}
+                                helperText={errors.tasks?.message}
+                            />
+                        )}
                     />
 
-                    <CustomInput
-                        innerRef={register("session", { valueAsNumber: true })}
-                        labelText="Sesión"
-                        name="session"
-                        placeholder="Número de sesiones"
-                        errors={errors.session}
-                        type="number"
-                    />
-
-                    <div>
-                        <FormLabel
-                            htmlFor={name}
-                            sx={{
-                                color: "#202124",
-                                fontWeight: "800",
-                                lineHeight: "45px",
-                                marginBottom: 2,
-                            }}
-                            className="!text-xl"
-                        >
-                            Color
-                        </FormLabel>
-
-                        <CirclePicker
-                            width="100%"
-                            color={newSession.color}
-                            onChangeComplete={handleColorChange}
-                        />
-                    </div>
+                    {/* Mostrar las tareas seleccionadas */}
+                    <ul>
+                        {tasks.map((task, index) => (
+                            <li key={task._id || index}>{task.title}</li>
+                        ))}
+                    </ul>
 
                     <Box mt={2} display="flex" justifyContent="flex-end">
                         <Button onClick={handleCloseModal} style={{ marginRight: "8px" }}>
                             Cancelar
                         </Button>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={handleSaveSession}
-                        >
+                        <Button type="submit" variant="contained" color="primary">
                             Guardar
                         </Button>
                     </Box>
@@ -116,9 +94,8 @@ const CreateNewPomodoro = ({
 CreateNewPomodoro.propTypes = {
     isModalOpen: PropTypes.bool.isRequired,
     handleCloseModal: PropTypes.func.isRequired,
-    newSession: PropTypes.object.isRequired,
-    setNewSession: PropTypes.func.isRequired,
-    handleSaveSession: PropTypes.func.isRequired,
+    handleSavePomodoroTask: PropTypes.func.isRequired,
+    options: PropTypes.array.isRequired,
 };
 
 export default CreateNewPomodoro;

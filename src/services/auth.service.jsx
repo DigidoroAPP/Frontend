@@ -40,7 +40,7 @@ export const register = async (name, email, password) => {
 
 export const getMe = async (token) => {
   try {
-    const response = await axios.get(`${API_URL}auth/me`, {
+    const response = await axios.get(`${API_URL}user/me`, {
       headers: {
         Authorization: `${import.meta.env.VITE_API_PREFIX} ${token}`,
         Accept: "application/json",
