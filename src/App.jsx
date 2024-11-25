@@ -1,12 +1,8 @@
 import {
-  BrowserRouter,
   createBrowserRouter,
   Outlet,
-  Route,
   RouterProvider,
-  Routes,
 } from "react-router-dom";
-import Home from "./pages/Home";
 import theme from "./theme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import Login from "./pages/login/Login";
@@ -66,32 +62,5 @@ const App = () => {
   return <RouterProvider router={router} />;
 };
 
-/* 
-function App() {
-  return (
-    <>
-      <BrowserRouter>
-        <AuthProvider>
-          <ThemeProvider theme={theme}>
-            <Routes>
-              <Route path={VIEWS.login} element={<Login />} />
-              <Route path={VIEWS.register} element={<Register />} />
-              <Route path="*" element={<NotFoundPage />} />
 
-              {/* Rutas publicas para usuarios logeados }
-              <Route element={<ProtectedRoute />}>
-                <Route path={VIEWS.securityHome} element={<ProtectedHome />} />
-                <Route path={VIEWS.tasks} element={<TaskPage />} />
-                <Route path={VIEWS.pomodoro} element={<Pomodoro />} />
-              </Route>
-            </Routes>
-
-            <CssBaseline />
-            <Toaster position="top-right" />
-          </ThemeProvider>
-        </AuthProvider>
-      </BrowserRouter>
-    </>
-  );
-} */
 export default App;

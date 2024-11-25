@@ -21,13 +21,11 @@ import { getTasks, updateTask } from "../../services/task.sevice";
 import useSaveSessionOnUnload from "../../hook/useSaveSessionOnUnload";
 import { AssignmentLate } from "@mui/icons-material";
 import PomodoroSkeleton from "../../containers/pomodoro/PomodoroSkeleton";
-import useBlockNavigation from "./UseBlockerNavigation.hook";
 import { useBlocker } from "react-router-dom";
 import { toast } from "sonner";
 
 export const Pomodoro = () => {
   // Manejo del pomodoro (Segundos y minutos)
-  const [selectedPomodoroTask, setSelectedPomodoroTask] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [value, setValue] = useState(0);
   const [timeLeft, setTimeLeft] = useState(TIME.POMODORO);
@@ -261,7 +259,7 @@ export const Pomodoro = () => {
           sx={{ fontSize: 40 }}
           fontSize="medium"
         />
-        {isPlaying && selectedPomodoroTask ? (
+        {isPlaying && remoteTasksPomodoro ? (
           <PauseCircleOutlineOutlinedIcon
             onClick={handlePausePlayButton}
             sx={{ fontSize: 60 }}
