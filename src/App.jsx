@@ -1,4 +1,11 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter,
+  createBrowserRouter,
+  Outlet,
+  Route,
+  RouterProvider,
+  Routes,
+} from "react-router-dom";
 import Home from "./pages/Home";
 import theme from "./theme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
@@ -13,6 +20,53 @@ import { Toaster } from "sonner";
 import NotFoundPage from "./pages/NotFoundPage";
 import ProtectedRoute from "./components/routes/ProtectedRoute";
 
+const AppLayout = () => {
+  return (
+    <ThemeProvider theme={theme}>
+      <AuthProvider>
+        <CssBaseline />
+        <Toaster position="top-right" />
+        <Outlet />
+      </AuthProvider>
+    </ThemeProvider>
+  );
+};
+
+const ProtectedLayout = () => {
+  return (
+    <ProtectedRoute>
+      <Outlet />
+    </ProtectedRoute>
+  );
+};
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <AppLayout />, // Layout principal
+    children: [
+      { path: VIEWS.login, element: <Login /> },
+      { path: VIEWS.register, element: <Register /> },
+      { path: "*", element: <NotFoundPage /> },
+
+      // Rutas protegidas
+      {
+        element: <ProtectedLayout />,
+        children: [
+          { path: VIEWS.securityHome, element: <ProtectedHome /> },
+          { path: VIEWS.tasks, element: <TaskPage /> },
+          { path: VIEWS.pomodoro, element: <Pomodoro /> },
+        ],
+      },
+    ],
+  },
+]);
+
+const App = () => {
+  return <RouterProvider router={router} />;
+};
+
+/* 
 function App() {
   return (
     <>
@@ -24,7 +78,7 @@ function App() {
               <Route path={VIEWS.register} element={<Register />} />
               <Route path="*" element={<NotFoundPage />} />
 
-              {/* Rutas publicas para usuarios logeados */}
+              {/* Rutas publicas para usuarios logeados }
               <Route element={<ProtectedRoute />}>
                 <Route path={VIEWS.securityHome} element={<ProtectedHome />} />
                 <Route path={VIEWS.tasks} element={<TaskPage />} />
@@ -39,5 +93,5 @@ function App() {
       </BrowserRouter>
     </>
   );
-}
+} */
 export default App;
